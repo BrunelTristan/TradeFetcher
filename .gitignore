@@ -2,7 +2,7 @@
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
 #
 # Binaries for programs and plugins
-tradeFetcher
+/tradeFetcher
 
 # Test binary, built with `go test -c`
 *.test
@@ -18,7 +18,7 @@ go.work
 go.work.sum
 
 # env file
-environnement
+/environnement
 
 # generated mocks
-internal/generatedMocks/
+/internal/generatedMocks/

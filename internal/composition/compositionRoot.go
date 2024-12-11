@@ -27,5 +27,5 @@ func (c CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 }
 
 func (c CompositionRoot) ComposeProcessUnit() processUnit.IProcessUnit {
-	return nil
+	return processUnit.NewTradeDisplayer()
 }

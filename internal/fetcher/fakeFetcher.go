@@ -5,8 +5,8 @@ import (
 	"tradeFetcher/model/trading"
 )
 
-const MIN_TRADES_COUNT int = 10
-const MAX_TRADES_COUNT int = 255
+const MIN_TRADES_COUNT int = 1
+const MAX_TRADES_COUNT int = 5
 
 type FakeFetcher struct {
 }

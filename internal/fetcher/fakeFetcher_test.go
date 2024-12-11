@@ -19,4 +19,10 @@ func TestFetchLastTrades(t *testing.T) {
 	trades := fakeObject.FetchLastTrades()
 
 	assert.NotNil(t, trades)
+	assert.NotEmpty(t, trades)
+
+	for _, trade := range trades {
+		assert.NotNil(t, trade)
+		assert.NotEmpty(t, trade)
+	}
 }

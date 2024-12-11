@@ -42,8 +42,10 @@ func launch(conf *configuration.CmdLineConfiguration) {
 	root.Build()
 
 	fetcher := root.ComposeFetcher()
+	processor := root.ComposeProcessUnit()
 
-	fetcher.FetchLastTrades()
+	trades := fetcher.FetchLastTrades()
+	processor.ProcessTrades(trades)
 }
 
 func main() {

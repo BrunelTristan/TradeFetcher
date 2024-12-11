@@ -3,6 +3,7 @@ package composition
 import (
 	"reflect"
 	"tradeFetcher/internal/fetcher"
+	"tradeFetcher/internal/processUnit"
 	"tradeFetcher/model/configuration"
 )
 
@@ -23,4 +24,8 @@ func (c CompositionRoot) Build() {
 
 func (c CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 	return fetcher.NewFakeFetcher()
+}
+
+func (c CompositionRoot) ComposeProcessUnit() processUnit.IProcessUnit {
+	return nil
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"tradeFetcher/internal/composition"
 	"tradeFetcher/model/configuration"
 )
 
@@ -36,6 +37,9 @@ func displayVersion() {
 }
 
 func launch(conf *configuration.CmdLineConfiguration) {
+	root := composition.NewCompositionRoot(conf)
+
+	root.Build()
 }
 
 func main() {

@@ -2,6 +2,7 @@ package composition
 
 import (
 	"reflect"
+	"tradeFetcher/internal/fetcher"
 	"tradeFetcher/model/configuration"
 )
 
@@ -18,4 +19,8 @@ func NewCompositionRoot(conf *configuration.CmdLineConfiguration) *CompositionRo
 }
 
 func (c CompositionRoot) Build() {
+}
+
+func (c CompositionRoot) ComposeFetcher() fetcher.IFetcher {
+	return fetcher.NewFakeFetcher()
 }

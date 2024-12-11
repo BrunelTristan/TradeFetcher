@@ -40,6 +40,10 @@ func launch(conf *configuration.CmdLineConfiguration) {
 	root := composition.NewCompositionRoot(conf)
 
 	root.Build()
+
+	fetcher := root.ComposeFetcher()
+
+	fetcher.FetchLastTrades()
 }
 
 func main() {

@@ -17,7 +17,7 @@ func NewBitgetSpotFetcher(tGetter externalTools.IGetter) fetcher.IFetcher {
 }
 
 func (f BitgetSpotFetcher) FetchLastTrades() []trading.Trade {
-	_ = f.tradeGetter.Get(nil)
+	_, _ = f.tradeGetter.Get(nil)
 
 	trades := make([]trading.Trade, 0)
 

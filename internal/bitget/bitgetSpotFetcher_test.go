@@ -22,7 +22,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutStrindGet(t *testing.T) {
 		EXPECT().
 		Get(gomock.Any()).
 		Times(1).
-		Return(52)
+		Return(52, nil)
 
 	fakeObject := NewBitgetSpotFetcher(externalGetterMock)
 

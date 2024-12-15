@@ -1,6 +1,7 @@
 package bitget
 
 import (
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"testing"
@@ -29,5 +30,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithGetError(t *testing.T) {
 
 	assert.NotNil(t, fakeObject)
 
-	_ = fakeObject.FetchLastTrades()
+	_, err := fakeObject.FetchLastTrades()
+
+	assert.True(t, errors.As(err, new(*error.RestApiError)))
 }

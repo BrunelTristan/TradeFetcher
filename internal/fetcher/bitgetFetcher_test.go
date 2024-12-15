@@ -14,6 +14,10 @@ func TestNewBitgetFetcher(t *testing.T) {
 	assert.NotNil(t, fakeObject)
 }
 
+func TestBitgetFetcherFetchLastTradesWithErrorOnSpotFetcher(t *testing.T) {
+	// TODO test it
+}
+
 func TestBitgetFetcherFetchLastTrades(t *testing.T) {
 	mockController := gomock.NewController(t)
 
@@ -25,14 +29,15 @@ func TestBitgetFetcherFetchLastTrades(t *testing.T) {
 		EXPECT().
 		FetchLastTrades().
 		Times(1).
-		Return(make([]trading.Trade, tradesCount))
+		Return(make([]trading.Trade, tradesCount), nil)
 
 	fakeObject := NewBitgetFetcher(spotFetcherMock)
 
 	assert.NotNil(t, fakeObject)
 
-	trades := fakeObject.FetchLastTrades()
+	trades, err := fakeObject.FetchLastTrades()
 
+	assert.Nil(t, err)
 	assert.NotNil(t, trades)
 	assert.NotEmpty(t, trades)
 

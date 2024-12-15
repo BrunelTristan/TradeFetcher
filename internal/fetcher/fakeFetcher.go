@@ -15,7 +15,7 @@ func NewFakeFetcher() IFetcher {
 	return &FakeFetcher{}
 }
 
-func (f FakeFetcher) FetchLastTrades() []trading.Trade {
+func (f FakeFetcher) FetchLastTrades() ([]trading.Trade, error) {
 	tradeCount := MIN_TRADES_COUNT + rand.IntN(MAX_TRADES_COUNT-MIN_TRADES_COUNT)
 
 	trades := make([]trading.Trade, tradeCount)
@@ -27,5 +27,5 @@ func (f FakeFetcher) FetchLastTrades() []trading.Trade {
 		trades[index].Fees = rand.Float64()
 	}
 
-	return trades
+	return trades, nil
 }

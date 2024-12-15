@@ -16,8 +16,9 @@ func TestFakeFetcherFetchLastTrades(t *testing.T) {
 
 	assert.NotNil(t, fakeObject)
 
-	trades := fakeObject.FetchLastTrades()
+	trades, err := fakeObject.FetchLastTrades()
 
+	assert.Nil(t, err)
 	assert.NotNil(t, trades)
 	assert.NotEmpty(t, trades)
 

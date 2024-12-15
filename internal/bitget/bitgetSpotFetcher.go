@@ -16,10 +16,14 @@ func NewBitgetSpotFetcher(tGetter externalTools.IGetter) fetcher.IFetcher {
 	}
 }
 
-func (f BitgetSpotFetcher) FetchLastTrades() []trading.Trade {
-	_, _ = f.tradeGetter.Get(nil)
+func (f BitgetSpotFetcher) FetchLastTrades() ([]trading.Trade, error) {
+	_, err := f.tradeGetter.Get(nil)
+
+	if err != nil {
+		return nil, err
+	}
 
 	trades := make([]trading.Trade, 0)
 
-	return trades
+	return trades, nil
 }

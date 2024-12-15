@@ -14,8 +14,8 @@ func NewBitgetFetcher(sFetcher IFetcher) IFetcher {
 	}
 }
 
-func (f BitgetFetcher) FetchLastTrades() []trading.Trade {
-	trades := f.spotFetcher.FetchLastTrades()
+func (f BitgetFetcher) FetchLastTrades() ([]trading.Trade, error) {
+	trades, err := f.spotFetcher.FetchLastTrades()
 
-	return trades
+	return trades, err
 }

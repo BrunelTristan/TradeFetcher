@@ -44,7 +44,7 @@ func launch(conf *configuration.CmdLineConfiguration) {
 	fetcher := root.ComposeFetcher()
 	processor := root.ComposeProcessUnit()
 
-	trades := fetcher.FetchLastTrades()
+	trades, _ := fetcher.FetchLastTrades()
 	processor.ProcessTrades(trades)
 }
 

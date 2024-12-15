@@ -30,7 +30,8 @@ func TestBitgetSpotFetcherFetchLastTradesWithGetError(t *testing.T) {
 
 	assert.NotNil(t, fakeObject)
 
-	_, err := fakeObject.FetchLastTrades()
+	trades, err := fakeObject.FetchLastTrades()
 
 	assert.True(t, errors.As(err, new(*error.RestApiError)))
+	assert.Nil(t, trades)
 }

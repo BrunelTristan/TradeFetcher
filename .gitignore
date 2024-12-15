@@ -22,3 +22,5 @@ go.work.sum
 
 # generated mocks
 /internal/generatedMocks/
+
+.vscode/settings.json

@@ -24,7 +24,7 @@ func (c CompositionRoot) Build() {
 }
 
 func (c CompositionRoot) ComposeFetcher() fetcher.IFetcher {
-	return fetcher.NewFakeFetcher()
+	return fetcher.NewBitgetFetcher(fetcher.NewFakeFetcher())
 }
 
 func (c CompositionRoot) ComposeProcessUnit() processUnit.IProcessUnit {

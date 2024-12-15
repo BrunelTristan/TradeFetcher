@@ -4,6 +4,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"testing"
+	"tradeFetcher/internal/error"
 	"tradeFetcher/internal/generatedMocks"
 )
 
@@ -13,7 +14,7 @@ func TestNewBitgetSpotFetcher(t *testing.T) {
 	assert.NotNil(t, fakeObject)
 }
 
-func TestBitgetSpotFetcherFetchLastTradesWithoutStrindGet(t *testing.T) {
+func TestBitgetSpotFetcherFetchLastTradesWithGetError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
 	externalGetterMock := generatedMocks.NewMockIGetter(mockController)
@@ -22,7 +23,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutStrindGet(t *testing.T) {
 		EXPECT().
 		Get(gomock.Any()).
 		Times(1).
-		Return(52, nil)
+		Return(nil, &error.RestApiError{HttpCode: 500})
 
 	fakeObject := NewBitgetSpotFetcher(externalGetterMock)
 

@@ -1,9 +1,11 @@
 package fetcher
 
 import (
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"testing"
+	"tradeFetcher/internal/error"
 	"tradeFetcher/internal/generatedMocks"
 	"tradeFetcher/model/trading"
 )
@@ -15,7 +17,24 @@ func TestNewBitgetFetcher(t *testing.T) {
 }
 
 func TestBitgetFetcherFetchLastTradesWithErrorOnSpotFetcher(t *testing.T) {
-	// TODO test it
+	mockController := gomock.NewController(t)
+
+	spotFetcherMock := generatedMocks.NewMockIFetcher(mockController)
+
+	spotFetcherMock.
+		EXPECT().
+		FetchLastTrades().
+		Times(1).
+		Return(nil, &error.RestApiError{HttpCode: 404})
+
+	fakeObject := NewBitgetFetcher(spotFetcherMock)
+
+	assert.NotNil(t, fakeObject)
+
+	trades, err := fakeObject.FetchLastTrades()
+
+	assert.True(t, errors.As(err, new(*error.RestApiError)))
+	assert.Nil(t, trades)
 }
 
 func TestBitgetFetcherFetchLastTrades(t *testing.T) {

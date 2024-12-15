@@ -3,6 +3,7 @@ package composition
 import (
 	"reflect"
 	"tradeFetcher/internal/fetcher"
+	"tradeFetcher/internal/formatter"
 	"tradeFetcher/internal/processUnit"
 	"tradeFetcher/model/configuration"
 )
@@ -27,5 +28,6 @@ func (c CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 }
 
 func (c CompositionRoot) ComposeProcessUnit() processUnit.IProcessUnit {
-	return processUnit.NewTradeDisplayer()
+	return processUnit.NewTradeDisplayer(
+		formatter.NewCsvTradeFormatter())
 }

@@ -11,7 +11,7 @@ func TestNewFakeFetcher(t *testing.T) {
 	assert.NotNil(t, fakeObject)
 }
 
-func TestFetchLastTrades(t *testing.T) {
+func TestFakeFetcherFetchLastTrades(t *testing.T) {
 	fakeObject := NewFakeFetcher()
 
 	assert.NotNil(t, fakeObject)

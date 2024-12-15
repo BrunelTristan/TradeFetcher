@@ -22,9 +22,9 @@ func (f FakeFetcher) FetchLastTrades() []trading.Trade {
 
 	for index := 0; index < tradeCount; index++ {
 		trades[index].Pair = "FakePair"
-		trades[index].Price = rand.Float32()
-		trades[index].Quantity = rand.Float32()
-		trades[index].Fees = rand.Float32()
+		trades[index].Price = rand.Float64()
+		trades[index].Quantity = rand.Float64()
+		trades[index].Fees = rand.Float64()
 	}
 
 	return trades

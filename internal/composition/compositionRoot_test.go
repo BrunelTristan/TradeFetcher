@@ -23,3 +23,14 @@ func TestComposeFetcher(t *testing.T) {
 
 	assert.NotNil(t, fetcher)
 }
+
+func TestComposeProcessUnit(t *testing.T) {
+	conf := &configuration.CmdLineConfiguration{}
+	root := NewCompositionRoot(conf)
+
+	root.Build()
+
+	unit := root.ComposeProcessUnit()
+
+	assert.NotNil(t, unit)
+}

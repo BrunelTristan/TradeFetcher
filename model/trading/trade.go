@@ -2,7 +2,7 @@ package trading
 
 type Trade struct {
 	Pair     string
-	Price    float32
-	Quantity float32
-	Fees     float32
+	Price    float64
+	Quantity float64
+	Fees     float64
 }

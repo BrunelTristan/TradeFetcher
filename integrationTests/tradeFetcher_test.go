@@ -1,11 +1,21 @@
 package integrationTest
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+	"tradeFetcher/internal/composition"
+	"tradeFetcher/model/configuration"
 )
 
 func TestMain(t *testing.T) {
-	// TODO
-	assert.True(t, true)
+	conf := &configuration.CmdLineConfiguration{}
+
+	root := composition.NewCompositionRoot(conf)
+
+	root.Build()
+
+	fetcher := root.ComposeFetcher()
+	processor := root.ComposeProcessUnit()
+
+	trades := fetcher.FetchLastTrades()
+	processor.ProcessTrades(trades)
 }

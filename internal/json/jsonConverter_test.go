@@ -106,7 +106,7 @@ func TestExportBadTypeObject(t *testing.T) {
 
 	assert.NotNil(t, err)
 	assert.Equal(t, "", output)
-	
+
 	assert.True(t, errors.As(err, new(*error.JsonError)))
 	assert.Equal(t, "Error on json operation : Bad type object", err.Error())
 }*/
@@ -115,18 +115,18 @@ func TestExportRealObject(t *testing.T) {
 	converter := NewJsonConverter[JsonTesterObject]()
 
 	output, err := converter.Export(&JsonTesterObject{
-		BooleanField : true,
-		IntegerField : 6,
-		FloatingField : 0.354,
-		StringField : "wonder",
-		ListObjectField : []JsonTesterObject{
+		BooleanField:  true,
+		IntegerField:  6,
+		FloatingField: 0.354,
+		StringField:   "wonder",
+		ListObjectField: []JsonTesterObject{
 			JsonTesterObject{
 				IntegerField: 38,
-				StringField: "other",
+				StringField:  "other",
 			},
 			JsonTesterObject{
 				IntegerField: 796354,
-				StringField: "a",
+				StringField:  "a",
 			},
 		},
 	})

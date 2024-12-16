@@ -17,14 +17,12 @@ func (j JsonConverter[T]) Import(jsonText string) (*T, error) {
 	var object T
 
 	if err := json.Unmarshal([]byte(jsonText), &object); err != nil {
-		jsonError := &customError.JsonError{}
+		jsonError := &customError.JsonError{Message: err.Error()}
 
 		if errors.As(err, new(*json.UnmarshalTypeError)) {
 			jsonError.Message = "Bad field format"
 		} else if errors.As(err, new(*json.SyntaxError)) {
 			jsonError.Message = "Bad json format"
-		} else {
-			jsonError.Message = err.Error()
 		}
 
 		return nil, jsonError

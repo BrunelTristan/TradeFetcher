@@ -8,11 +8,11 @@ import (
 )
 
 type JsonTesterObject struct {
-	BooleanField    bool               `json:"b"`
+	BooleanField    bool               `json:"b,omitempty"`
 	IntegerField    int                `json:"i"`
-	FloatingField   float64            `json:"f"`
+	FloatingField   float64            `json:"f,omitempty"`
 	StringField     string             `json:"s"`
-	ListObjectField []JsonTesterObject `json:"l"`
+	ListObjectField []JsonTesterObject `json:"l,omitempty"`
 }
 
 func TestNewJsonConverter(t *testing.T) {
@@ -81,17 +81,56 @@ func TestImportWithGoodData(t *testing.T) {
 }
 
 func TestExportNil(t *testing.T) {
-	// TODO
+	converter := NewJsonConverter[JsonTesterObject]()
+
+	output, err := converter.Export(nil)
+
+	assert.Nil(t, err)
+	assert.Equal(t, "", output)
 }
 
 func TestExportEmptyObject(t *testing.T) {
-	// TODO
+	converter := NewJsonConverter[JsonTesterObject]()
+
+	output, err := converter.Export(&JsonTesterObject{})
+
+	assert.Nil(t, err)
+	assert.Equal(t, "{\"i\":0,\"s\":\"\"}", output)
 }
 
+/* Manage by compiler : you can't pass an object with the bad type
 func TestExportBadTypeObject(t *testing.T) {
-	// TODO
-}
+	converter := NewJsonConverter[JsonTesterObject]()
+
+	output, err := converter.Export(&error.RestApiError{})
+
+	assert.NotNil(t, err)
+	assert.Equal(t, "", output)
+	
+	assert.True(t, errors.As(err, new(*error.JsonError)))
+	assert.Equal(t, "Error on json operation : Bad type object", err.Error())
+}*/
 
 func TestExportRealObject(t *testing.T) {
-	// TODO
+	converter := NewJsonConverter[JsonTesterObject]()
+
+	output, err := converter.Export(&JsonTesterObject{
+		BooleanField : true,
+		IntegerField : 6,
+		FloatingField : 0.354,
+		StringField : "wonder",
+		ListObjectField : []JsonTesterObject{
+			JsonTesterObject{
+				IntegerField: 38,
+				StringField: "other",
+			},
+			JsonTesterObject{
+				IntegerField: 796354,
+				StringField: "a",
+			},
+		},
+	})
+
+	assert.Nil(t, err)
+	assert.Equal(t, "{\"b\":true,\"i\":6,\"f\":0.354,\"s\":\"wonder\",\"l\":[{\"i\":38,\"s\":\"other\"},{\"i\":796354,\"s\":\"a\"}]}", output)
 }

@@ -34,5 +34,11 @@ func (j JsonConverter[T]) Import(jsonText string) (*T, error) {
 }
 
 func (j JsonConverter[T]) Export(object *T) (string, error) {
-	return "", nil
+	if object == nil {
+		return "", nil
+	}
+
+	bytes, err := json.Marshal(object)
+
+	return string(bytes), err
 }

@@ -3,7 +3,7 @@ package json
 import (
 	"encoding/json"
 	"errors"
-	customError "tradeFetcher/internal/error"
+	customError "tradeFetcher/model/error"
 )
 
 type JsonConverter[T any] struct {

@@ -5,8 +5,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"testing"
-	"tradeFetcher/internal/error"
 	"tradeFetcher/internal/generatedMocks"
+	"tradeFetcher/model/error"
 	"tradeFetcher/model/trading"
 )
 

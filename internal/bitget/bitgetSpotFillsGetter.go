@@ -7,14 +7,17 @@ import (
 )
 
 type BitgetSpotFillsGetter struct {
-	apiCommand externalTools.ICommand[bitgetModel.ApiCommandParameters]
+	apiCommand   externalTools.ICommand[bitgetModel.ApiCommandParameters]
+	routeBuilder externalTools.IApiRouteBuilder
 }
 
 func NewBitgetSpotFillsGetter(
 	aCommand externalTools.ICommand[bitgetModel.ApiCommandParameters],
+	rBuilder externalTools.IApiRouteBuilder,
 ) externalTools.ICommand[bitgetModel.SpotGetFillCommandParameters] {
 	return &BitgetSpotFillsGetter{
-		apiCommand: aCommand,
+		apiCommand:   aCommand,
+		routeBuilder: rBuilder,
 	}
 }
 
@@ -23,7 +26,12 @@ func (g *BitgetSpotFillsGetter) Get(parameters *bitgetModel.SpotGetFillCommandPa
 		return nil, &customError.RestApiError{HttpCode: 999}
 	}
 
+	route := g.routeBuilder.BuildRoute(
+		[]string{bitgetModel.SPOT_ROOT_ROUTE, bitgetModel.SPOT_GET_FILLS_SUB_ROUTE},
+		map[string]string{"symbol": parameters.Symbol},
+	)
+
 	return g.apiCommand.Get(&bitgetModel.ApiCommandParameters{
-		Route: "/api/v2/spot/trade/fills?symbol=ETHUSDT",
+		Route: route,
 	})
 }

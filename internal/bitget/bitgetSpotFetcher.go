@@ -12,11 +12,13 @@ import (
 )
 
 type BitgetSpotFetcher struct {
-	tradeGetter       externalTools.IGetter
+	tradeGetter       externalTools.ICommand[bitgetModel.SpotGetFillParametersCommand]
 	spotFillConverter json.IJsonConverter[bitgetModel.ApiSpotGetFills]
 }
 
-func NewBitgetSpotFetcher(tGetter externalTools.IGetter, converter json.IJsonConverter[bitgetModel.ApiSpotGetFills]) fetcher.IFetcher {
+func NewBitgetSpotFetcher(
+	tGetter externalTools.ICommand[bitgetModel.SpotGetFillParametersCommand],
+	converter json.IJsonConverter[bitgetModel.ApiSpotGetFills]) fetcher.IFetcher {
 	return &BitgetSpotFetcher{
 		tradeGetter:       tGetter,
 		spotFillConverter: converter,

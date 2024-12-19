@@ -19,7 +19,7 @@ func TestNewBitgetSpotFetcher(t *testing.T) {
 func TestBitgetSpotFetcherFetchLastTradesWithGetError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillParametersCommand](mockController)
+	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillCommandParameters](mockController)
 	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
 
 	externalGetterMock.
@@ -50,7 +50,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithGetError(t *testing.T) {
 func TestBitgetSpotFetcherFetchLastTradesWithJsonConvertError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillParametersCommand](mockController)
+	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillCommandParameters](mockController)
 	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
 
 	externalGetterMock.
@@ -82,7 +82,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithJsonConvertError(t *testing.T) {
 func TestBitgetSpotFetcherFetchLastTradesWithBitgetError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillParametersCommand](mockController)
+	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillCommandParameters](mockController)
 	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
 
 	externalGetterMock.
@@ -116,7 +116,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithBitgetError(t *testing.T) {
 func TestBitgetSpotFetcherFetchLastTradesWithPriceFloatingError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillParametersCommand](mockController)
+	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillCommandParameters](mockController)
 	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
 
 	externalGetterMock.
@@ -158,7 +158,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithPriceFloatingError(t *testing.T) {
 func TestBitgetSpotFetcherFetchLastTradesWithQuantityFloatingError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillParametersCommand](mockController)
+	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillCommandParameters](mockController)
 	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
 
 	externalGetterMock.
@@ -200,7 +200,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithQuantityFloatingError(t *testing.T)
 func TestBitgetSpotFetcherFetchLastTradesWitFeesFloatingError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillParametersCommand](mockController)
+	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillCommandParameters](mockController)
 	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
 
 	externalGetterMock.
@@ -243,7 +243,7 @@ func TestBitgetSpotFetcherFetchLastTradesWitFeesFloatingError(t *testing.T) {
 func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillParametersCommand](mockController)
+	externalGetterMock := generatedMocks.NewMockICommand[bitgetModel.SpotGetFillCommandParameters](mockController)
 	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
 
 	externalGetterMock.

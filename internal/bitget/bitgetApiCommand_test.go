@@ -3,8 +3,10 @@ package bitget
 import (
 	"errors"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/mock/gomock"
 	"net/url"
 	"testing"
+	"tradeFetcher/internal/generatedMocks"
 	bitgetModel "tradeFetcher/model/bitget"
 	"tradeFetcher/model/error"
 )
@@ -42,7 +44,15 @@ func TestCallApiCommandWithUnsupportedChars(t *testing.T) {
 }
 
 func TestCallApiCommandWithUnkwownRoute(t *testing.T) {
-	api := NewBitgetApiCommand(nil, nil)
+	mockController := gomock.NewController(t)
+
+	signatureBuilderMock := generatedMocks.NewMockISignatureBuilder(mockController)
+
+	signatureBuilderMock.
+		EXPECT().
+		Sign(gomock.Any())
+
+	api := NewBitgetApiCommand(nil, signatureBuilderMock)
 	parameters := &bitgetModel.ApiCommandParameters{
 		Route: ".apis/vXXXX/public/time",
 	}
@@ -55,11 +65,43 @@ func TestCallApiCommandWithUnkwownRoute(t *testing.T) {
 	assert.True(t, errors.As(err, new(*url.Error)))
 }
 
-func TestCallApiCommandWithoutError(t *testing.T) {
-	api := NewBitgetApiCommand(nil, nil)
+func TestCallApiCommandWithoutErrorWithoutQueryStringWithoutBody(t *testing.T) {
+	mockController := gomock.NewController(t)
+
+	signatureBuilderMock := generatedMocks.NewMockISignatureBuilder(mockController)
+
+	api := NewBitgetApiCommand(nil, signatureBuilderMock)
 	parameters := &bitgetModel.ApiCommandParameters{
 		Route: "/api/v2/public/time",
 	}
+
+	signatureBuilderMock.
+		EXPECT().
+		Sign(gomock.Eq([]byte("GET/api/v2/public/time"))).
+		Times(1)
+
+	output, err := api.Get(parameters)
+
+	assert.Nil(t, err)
+	assert.NotNil(t, output)
+
+	assert.NotEmpty(t, output)
+}
+
+func TestCallApiCommandWithoutErrorWithQueryStringWithoutBody(t *testing.T) {
+	mockController := gomock.NewController(t)
+
+	signatureBuilderMock := generatedMocks.NewMockISignatureBuilder(mockController)
+
+	api := NewBitgetApiCommand(nil, signatureBuilderMock)
+	parameters := &bitgetModel.ApiCommandParameters{
+		Route: "/api/v2/public/time?param1=yesterday",
+	}
+
+	signatureBuilderMock.
+		EXPECT().
+		Sign(gomock.Eq([]byte("GET/api/v2/public/time?param1=yesterday"))).
+		Times(1)
 
 	output, err := api.Get(parameters)
 

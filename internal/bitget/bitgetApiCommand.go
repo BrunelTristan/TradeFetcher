@@ -10,13 +10,16 @@ import (
 )
 
 type BitgetApiCommand struct {
+	signatureBuilder externalTools.ISignatureBuilder
 }
 
 func NewBitgetApiCommand(
 	accountCfg *bitgetModel.AccountConfiguration,
-	signBuilder interface{},
+	signBuilder externalTools.ISignatureBuilder,
 ) externalTools.ICommand[bitgetModel.ApiCommandParameters] {
-	return &BitgetApiCommand{}
+	return &BitgetApiCommand{
+		signatureBuilder: signBuilder,
+	}
 }
 
 func (c *BitgetApiCommand) Get(parameters *bitgetModel.ApiCommandParameters) (interface{}, error) {
@@ -24,15 +27,25 @@ func (c *BitgetApiCommand) Get(parameters *bitgetModel.ApiCommandParameters) (in
 		return nil, &customError.RestApiError{HttpCode: 999}
 	}
 
+	const GET_VERB = "GET"
+
 	var fullUrlBuilder strings.Builder
+	var fullMessageToSignBuilder strings.Builder
 
 	fullUrlBuilder.WriteString("https://api.bitget.com")
 	fullUrlBuilder.WriteString(parameters.Route)
 
-	request, err := http.NewRequest("GET", fullUrlBuilder.String(), nil)
+	fullMessageToSignBuilder.WriteString(GET_VERB)
+	fullMessageToSignBuilder.WriteString(parameters.Route)
+
+	request, err := http.NewRequest(GET_VERB, fullUrlBuilder.String(), nil)
 	if err != nil {
 		return nil, err
 	}
+
+	signature := c.signatureBuilder.Sign([]byte(fullMessageToSignBuilder.String()))
+
+	request.Header.Set("ACCESS-SIGN", string(signature))
 
 	client := &http.Client{}
 	response, err := client.Do(request)

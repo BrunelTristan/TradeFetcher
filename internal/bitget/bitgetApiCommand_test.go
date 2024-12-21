@@ -4,20 +4,19 @@ import (
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"net/url"
-	"strings"
 	"testing"
 	bitgetModel "tradeFetcher/model/bitget"
 	"tradeFetcher/model/error"
 )
 
 func TestNewBitgetApiCommand(t *testing.T) {
-	fakeObject := NewBitgetApiCommand()
+	fakeObject := NewBitgetApiCommand(nil, nil)
 
 	assert.NotNil(t, fakeObject)
 }
 
 func TestCallApiCommandWithNilParameters(t *testing.T) {
-	api := NewBitgetApiCommand()
+	api := NewBitgetApiCommand(nil, nil)
 
 	output, err := api.Get(nil)
 
@@ -28,8 +27,22 @@ func TestCallApiCommandWithNilParameters(t *testing.T) {
 	assert.Equal(t, 999, err.(*error.RestApiError).HttpCode)
 }
 
+func TestCallApiCommandWithUnsupportedChars(t *testing.T) {
+	api := NewBitgetApiCommand(nil, nil)
+	parameters := &bitgetModel.ApiCommandParameters{
+		Route: "@^\\``||[{#~/public/time",
+	}
+
+	output, err := api.Get(parameters)
+
+	assert.Nil(t, output)
+	assert.NotNil(t, err)
+
+	assert.True(t, errors.As(err, new(*url.Error)))
+}
+
 func TestCallApiCommandWithUnkwownRoute(t *testing.T) {
-	api := NewBitgetApiCommand()
+	api := NewBitgetApiCommand(nil, nil)
 	parameters := &bitgetModel.ApiCommandParameters{
 		Route: ".apis/vXXXX/public/time",
 	}
@@ -42,8 +55,8 @@ func TestCallApiCommandWithUnkwownRoute(t *testing.T) {
 	assert.True(t, errors.As(err, new(*url.Error)))
 }
 
-func TestCallApiCommandSimpleGet(t *testing.T) {
-	api := NewBitgetApiCommand()
+func TestCallApiCommandWithoutError(t *testing.T) {
+	api := NewBitgetApiCommand(nil, nil)
 	parameters := &bitgetModel.ApiCommandParameters{
 		Route: "/api/v2/public/time",
 	}
@@ -54,5 +67,6 @@ func TestCallApiCommandSimpleGet(t *testing.T) {
 	assert.NotNil(t, output)
 
 	assert.NotEmpty(t, output)
-	assert.True(t, strings.HasPrefix(output.(string), "{\"code\":\"00000\",\"msg\":\"success\""))
 }
+
+// Valid data from bitget are tested in Integration tests

@@ -12,7 +12,10 @@ import (
 type BitgetApiCommand struct {
 }
 
-func NewBitgetApiCommand() externalTools.ICommand[bitgetModel.ApiCommandParameters] {
+func NewBitgetApiCommand(
+	accountCfg *bitgetModel.AccountConfiguration,
+	signBuilder interface{},
+) externalTools.ICommand[bitgetModel.ApiCommandParameters] {
 	return &BitgetApiCommand{}
 }
 
@@ -26,7 +29,13 @@ func (c *BitgetApiCommand) Get(parameters *bitgetModel.ApiCommandParameters) (in
 	fullUrlBuilder.WriteString("https://api.bitget.com")
 	fullUrlBuilder.WriteString(parameters.Route)
 
-	response, err := http.Get(fullUrlBuilder.String())
+	request, err := http.NewRequest("GET", fullUrlBuilder.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	client := &http.Client{}
+	response, err := client.Do(request)
 
 	if err != nil {
 		return nil, err

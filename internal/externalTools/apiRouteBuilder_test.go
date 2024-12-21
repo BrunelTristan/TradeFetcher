@@ -73,6 +73,7 @@ func TestBuildRealRoute(t *testing.T) {
 
 	assert.NotNil(t, route)
 	// params order are not mandatory
+	// TODO With Bitget it should order alphabeticaly
 	//assert.Equal(t, "/myPath/isNotHere/ButThere?p1=high&a25=plane&what=theF", route)
 	assert.Len(t, route, len("/myPath/isNotHere/ButThere?p1=high&a25=plane&what=theF"))
 	assert.True(t, strings.HasPrefix(route, "/myPath/isNotHere/ButThere?"))

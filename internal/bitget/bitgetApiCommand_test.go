@@ -5,7 +5,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
 	"net/url"
+	"strconv"
 	"testing"
+	"time"
 	"tradeFetcher/internal/generatedMocks"
 	bitgetModel "tradeFetcher/model/bitget"
 	"tradeFetcher/model/error"
@@ -52,7 +54,13 @@ func TestCallApiCommandWithUnkwownRoute(t *testing.T) {
 		EXPECT().
 		Sign(gomock.Any())
 
-	api := NewBitgetApiCommand(nil, signatureBuilderMock)
+	accountCfg := &bitgetModel.AccountConfiguration{
+		ApiKey:     "key",
+		PassPhrase: "phrase",
+		SecretKey:  "secret",
+	}
+
+	api := NewBitgetApiCommand(accountCfg, signatureBuilderMock)
 	parameters := &bitgetModel.ApiCommandParameters{
 		Route: ".apis/vXXXX/public/time",
 	}
@@ -70,15 +78,21 @@ func TestCallApiCommandWithoutErrorWithoutQueryStringWithoutBody(t *testing.T) {
 
 	signatureBuilderMock := generatedMocks.NewMockISignatureBuilder(mockController)
 
-	api := NewBitgetApiCommand(nil, signatureBuilderMock)
+	accountCfg := &bitgetModel.AccountConfiguration{
+		ApiKey:     "key",
+		PassPhrase: "phrase",
+		SecretKey:  "secret",
+	}
 	parameters := &bitgetModel.ApiCommandParameters{
 		Route: "/api/v2/public/time",
 	}
 
 	signatureBuilderMock.
 		EXPECT().
-		Sign(gomock.Eq([]byte("GET/api/v2/public/time"))).
+		Sign(gomock.Eq([]byte(strconv.FormatInt(int64(time.Now().UnixNano()/1000000), 10) + "GET/api/v2/public/time"))).
 		Times(1)
+
+	api := NewBitgetApiCommand(accountCfg, signatureBuilderMock)
 
 	output, err := api.Get(parameters)
 
@@ -93,15 +107,21 @@ func TestCallApiCommandWithoutErrorWithQueryStringWithoutBody(t *testing.T) {
 
 	signatureBuilderMock := generatedMocks.NewMockISignatureBuilder(mockController)
 
-	api := NewBitgetApiCommand(nil, signatureBuilderMock)
+	accountCfg := &bitgetModel.AccountConfiguration{
+		ApiKey:     "key",
+		PassPhrase: "phrase",
+		SecretKey:  "secret",
+	}
 	parameters := &bitgetModel.ApiCommandParameters{
 		Route: "/api/v2/public/time?param1=yesterday",
 	}
 
 	signatureBuilderMock.
 		EXPECT().
-		Sign(gomock.Eq([]byte("GET/api/v2/public/time?param1=yesterday"))).
+		Sign(gomock.Eq([]byte(strconv.FormatInt(int64(time.Now().UnixNano()/1000000), 10) + "GET/api/v2/public/time?param1=yesterday"))).
 		Times(1)
+
+	api := NewBitgetApiCommand(accountCfg, signatureBuilderMock)
 
 	output, err := api.Get(parameters)
 

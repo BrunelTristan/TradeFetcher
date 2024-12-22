@@ -24,3 +24,6 @@ go.work.sum
 /internal/generatedMocks/
 
 .vscode/settings.json
+
+# test files
+integrationTests/files/globalConfig.json

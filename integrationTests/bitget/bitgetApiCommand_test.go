@@ -11,7 +11,7 @@ import (
 	configModel "tradeFetcher/model/configuration"
 )
 
-func TestCallApiCommandSimpleGet(t *testing.T) {
+func TestCallApiQuerySimpleGet(t *testing.T) {
 	configLoader := configuration.NewConfigurationLoaderFromJsonFile[configModel.GlobalConfiguration]("../files/globalConfig.json")
 	globalConfig, err := configLoader.Load()
 
@@ -28,11 +28,11 @@ func TestCallApiCommandSimpleGet(t *testing.T) {
 		crypter,
 		encoder)
 
-	api := bitget.NewBitgetApiCommand(
+	api := bitget.NewBitgetApiQuery(
 		globalConfig.BitgetAccount,
 		signBuilder)
 
-	parameters := &bitgetModel.ApiCommandParameters{
+	parameters := &bitgetModel.ApiQueryParameters{
 		Route: "/api/v2/public/time",
 	}
 
@@ -45,7 +45,7 @@ func TestCallApiCommandSimpleGet(t *testing.T) {
 	assert.Equal(t, "{\"code\":\"00000\",\"msg\":\"success\"", output.(string)[0:31])
 }
 
-func TestCallApiCommandGetWithSignature(t *testing.T) {
+func TestCallApiQueryGetWithSignature(t *testing.T) {
 	configLoader := configuration.NewConfigurationLoaderFromJsonFile[configModel.GlobalConfiguration]("/src/integrationTests/files/globalConfig.json")
 	globalConfig, _ := configLoader.Load()
 
@@ -54,11 +54,11 @@ func TestCallApiCommandGetWithSignature(t *testing.T) {
 		security.NewSha256Crypter(),
 		externalTools.NewBase64Encoder())
 
-	api := bitget.NewBitgetApiCommand(
+	api := bitget.NewBitgetApiQuery(
 		globalConfig.BitgetAccount,
 		signBuilder)
 
-	parameters := &bitgetModel.ApiCommandParameters{
+	parameters := &bitgetModel.ApiQueryParameters{
 		Route: "/api/v2/spot/account/assets",
 	}
 

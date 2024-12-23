@@ -6,27 +6,28 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"tradeFetcher/internal/common"
 	"tradeFetcher/internal/externalTools"
 	bitgetModel "tradeFetcher/model/bitget"
 	customError "tradeFetcher/model/error"
 )
 
-type BitgetApiCommand struct {
+type BitgetApiQuery struct {
 	accountConfiguration *bitgetModel.AccountConfiguration
 	signatureBuilder     externalTools.ISignatureBuilder
 }
 
-func NewBitgetApiCommand(
+func NewBitgetApiQuery(
 	accountCfg *bitgetModel.AccountConfiguration,
 	signBuilder externalTools.ISignatureBuilder,
-) externalTools.ICommand[bitgetModel.ApiCommandParameters] {
-	return &BitgetApiCommand{
+) common.IQuery[bitgetModel.ApiQueryParameters] {
+	return &BitgetApiQuery{
 		accountConfiguration: accountCfg,
 		signatureBuilder:     signBuilder,
 	}
 }
 
-func (c *BitgetApiCommand) Get(parameters *bitgetModel.ApiCommandParameters) (interface{}, error) {
+func (c *BitgetApiQuery) Get(parameters *bitgetModel.ApiQueryParameters) (interface{}, error) {
 	if parameters == nil {
 		return nil, &customError.RestApiError{HttpCode: 999}
 	}

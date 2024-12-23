@@ -3,7 +3,7 @@ package bitget
 import (
 	"fmt"
 	"strconv"
-	"tradeFetcher/internal/externalTools"
+	"tradeFetcher/internal/common"
 	"tradeFetcher/internal/fetcher"
 	"tradeFetcher/internal/json"
 	bitgetModel "tradeFetcher/model/bitget"
@@ -12,12 +12,12 @@ import (
 )
 
 type BitgetSpotFetcher struct {
-	tradeGetter       externalTools.ICommand[bitgetModel.SpotGetFillCommandParameters]
+	tradeGetter       common.IQuery[bitgetModel.SpotGetFillQueryParameters]
 	spotFillConverter json.IJsonConverter[bitgetModel.ApiSpotGetFills]
 }
 
 func NewBitgetSpotFetcher(
-	tGetter externalTools.ICommand[bitgetModel.SpotGetFillCommandParameters],
+	tGetter common.IQuery[bitgetModel.SpotGetFillQueryParameters],
 	converter json.IJsonConverter[bitgetModel.ApiSpotGetFills]) fetcher.IFetcher {
 	return &BitgetSpotFetcher{
 		tradeGetter:       tGetter,

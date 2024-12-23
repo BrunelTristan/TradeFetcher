@@ -1,27 +1,28 @@
 package bitget
 
 import (
+	"tradeFetcher/internal/common"
 	"tradeFetcher/internal/externalTools"
 	bitgetModel "tradeFetcher/model/bitget"
 	customError "tradeFetcher/model/error"
 )
 
 type BitgetSpotFillsGetter struct {
-	apiCommand   externalTools.ICommand[bitgetModel.ApiCommandParameters]
+	apiQuery     common.IQuery[bitgetModel.ApiQueryParameters]
 	routeBuilder externalTools.IApiRouteBuilder
 }
 
 func NewBitgetSpotFillsGetter(
-	aCommand externalTools.ICommand[bitgetModel.ApiCommandParameters],
+	aQuery common.IQuery[bitgetModel.ApiQueryParameters],
 	rBuilder externalTools.IApiRouteBuilder,
-) externalTools.ICommand[bitgetModel.SpotGetFillCommandParameters] {
+) common.IQuery[bitgetModel.SpotGetFillQueryParameters] {
 	return &BitgetSpotFillsGetter{
-		apiCommand:   aCommand,
+		apiQuery:     aQuery,
 		routeBuilder: rBuilder,
 	}
 }
 
-func (g *BitgetSpotFillsGetter) Get(parameters *bitgetModel.SpotGetFillCommandParameters) (interface{}, error) {
+func (g *BitgetSpotFillsGetter) Get(parameters *bitgetModel.SpotGetFillQueryParameters) (interface{}, error) {
 	if parameters == nil {
 		return nil, &customError.RestApiError{HttpCode: 999}
 	}
@@ -31,7 +32,7 @@ func (g *BitgetSpotFillsGetter) Get(parameters *bitgetModel.SpotGetFillCommandPa
 		map[string]string{"symbol": parameters.Symbol},
 	)
 
-	return g.apiCommand.Get(&bitgetModel.ApiCommandParameters{
+	return g.apiQuery.Get(&bitgetModel.ApiQueryParameters{
 		Route: route,
 	})
 }

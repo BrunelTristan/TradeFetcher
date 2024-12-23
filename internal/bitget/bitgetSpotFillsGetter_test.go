@@ -19,7 +19,7 @@ func TestNewBitgetSpotFillsGetter(t *testing.T) {
 func TestGetSpotFillsWithNilParameters(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	apiGetterMock := generatedMocks.NewMockICommand[bitgetModel.ApiCommandParameters](mockController)
+	apiGetterMock := generatedMocks.NewMockIQuery[bitgetModel.ApiQueryParameters](mockController)
 	routeBuilderMock := generatedMocks.NewMockIApiRouteBuilder(mockController)
 
 	apiGetterMock.
@@ -44,15 +44,15 @@ func TestGetSpotFillsWithNilParameters(t *testing.T) {
 }
 
 func TestGetSpotFillsWithBitgetError(t *testing.T) {
-	parameters := &bitgetModel.SpotGetFillCommandParameters{Symbol: "ETHUSDT"}
+	parameters := &bitgetModel.SpotGetFillQueryParameters{Symbol: "ETHUSDT"}
 	expectedRoute := []string{"/api/v2/spot", "/trade/fills"}
 	expectedRouteParams := map[string]string{"symbol": "ETHUSDT"}
-	expectedApiParameters := &bitgetModel.ApiCommandParameters{
+	expectedApiParameters := &bitgetModel.ApiQueryParameters{
 		Route: "/api/v2/spot/trade/fills?symbol=ETHUSDT",
 	}
 	mockController := gomock.NewController(t)
 
-	apiGetterMock := generatedMocks.NewMockICommand[bitgetModel.ApiCommandParameters](mockController)
+	apiGetterMock := generatedMocks.NewMockIQuery[bitgetModel.ApiQueryParameters](mockController)
 	routeBuilderMock := generatedMocks.NewMockIApiRouteBuilder(mockController)
 
 	apiGetterMock.
@@ -79,15 +79,15 @@ func TestGetSpotFillsWithBitgetError(t *testing.T) {
 }
 
 func TestGetSpotFillsWithoutError(t *testing.T) {
-	parameters := &bitgetModel.SpotGetFillCommandParameters{Symbol: "ETHUSDT"}
+	parameters := &bitgetModel.SpotGetFillQueryParameters{Symbol: "ETHUSDT"}
 	expectedRoute := []string{"/api/v2/spot", "/trade/fills"}
 	expectedRouteParams := map[string]string{"symbol": "ETHUSDT"}
-	expectedApiParameters := &bitgetModel.ApiCommandParameters{
+	expectedApiParameters := &bitgetModel.ApiQueryParameters{
 		Route: "/api/v2/spot/trade/fills?symbol=ETHUSDT",
 	}
 	mockController := gomock.NewController(t)
 
-	apiGetterMock := generatedMocks.NewMockICommand[bitgetModel.ApiCommandParameters](mockController)
+	apiGetterMock := generatedMocks.NewMockIQuery[bitgetModel.ApiQueryParameters](mockController)
 	routeBuilderMock := generatedMocks.NewMockIApiRouteBuilder(mockController)
 
 	apiGetterMock.

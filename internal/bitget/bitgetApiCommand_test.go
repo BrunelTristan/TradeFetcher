@@ -13,14 +13,14 @@ import (
 	"tradeFetcher/model/error"
 )
 
-func TestNewBitgetApiCommand(t *testing.T) {
-	fakeObject := NewBitgetApiCommand(nil, nil)
+func TestNewBitgetApiQuery(t *testing.T) {
+	fakeObject := NewBitgetApiQuery(nil, nil)
 
 	assert.NotNil(t, fakeObject)
 }
 
-func TestCallApiCommandWithNilParameters(t *testing.T) {
-	api := NewBitgetApiCommand(nil, nil)
+func TestCallApiQueryWithNilParameters(t *testing.T) {
+	api := NewBitgetApiQuery(nil, nil)
 
 	output, err := api.Get(nil)
 
@@ -31,9 +31,9 @@ func TestCallApiCommandWithNilParameters(t *testing.T) {
 	assert.Equal(t, 999, err.(*error.RestApiError).HttpCode)
 }
 
-func TestCallApiCommandWithUnsupportedChars(t *testing.T) {
-	api := NewBitgetApiCommand(nil, nil)
-	parameters := &bitgetModel.ApiCommandParameters{
+func TestCallApiQueryWithUnsupportedChars(t *testing.T) {
+	api := NewBitgetApiQuery(nil, nil)
+	parameters := &bitgetModel.ApiQueryParameters{
 		Route: "@^\\``||[{#~/public/time",
 	}
 
@@ -45,7 +45,7 @@ func TestCallApiCommandWithUnsupportedChars(t *testing.T) {
 	assert.True(t, errors.As(err, new(*url.Error)))
 }
 
-func TestCallApiCommandWithUnkwownRoute(t *testing.T) {
+func TestCallApiQueryWithUnkwownRoute(t *testing.T) {
 	mockController := gomock.NewController(t)
 
 	signatureBuilderMock := generatedMocks.NewMockISignatureBuilder(mockController)
@@ -60,8 +60,8 @@ func TestCallApiCommandWithUnkwownRoute(t *testing.T) {
 		SecretKey:  "secret",
 	}
 
-	api := NewBitgetApiCommand(accountCfg, signatureBuilderMock)
-	parameters := &bitgetModel.ApiCommandParameters{
+	api := NewBitgetApiQuery(accountCfg, signatureBuilderMock)
+	parameters := &bitgetModel.ApiQueryParameters{
 		Route: ".apis/vXXXX/public/time",
 	}
 
@@ -73,7 +73,7 @@ func TestCallApiCommandWithUnkwownRoute(t *testing.T) {
 	assert.True(t, errors.As(err, new(*url.Error)))
 }
 
-func TestCallApiCommandWithoutErrorWithoutQueryStringWithoutBody(t *testing.T) {
+func TestCallApiQueryWithoutErrorWithoutQueryStringWithoutBody(t *testing.T) {
 	mockController := gomock.NewController(t)
 
 	signatureBuilderMock := generatedMocks.NewMockISignatureBuilder(mockController)
@@ -83,7 +83,7 @@ func TestCallApiCommandWithoutErrorWithoutQueryStringWithoutBody(t *testing.T) {
 		PassPhrase: "phrase",
 		SecretKey:  "secret",
 	}
-	parameters := &bitgetModel.ApiCommandParameters{
+	parameters := &bitgetModel.ApiQueryParameters{
 		Route: "/api/v2/public/time",
 	}
 
@@ -92,7 +92,7 @@ func TestCallApiCommandWithoutErrorWithoutQueryStringWithoutBody(t *testing.T) {
 		Sign(gomock.Eq([]byte(strconv.FormatInt(int64(time.Now().UnixNano()/1000000), 10) + "GET/api/v2/public/time"))).
 		Times(1)
 
-	api := NewBitgetApiCommand(accountCfg, signatureBuilderMock)
+	api := NewBitgetApiQuery(accountCfg, signatureBuilderMock)
 
 	output, err := api.Get(parameters)
 
@@ -102,7 +102,7 @@ func TestCallApiCommandWithoutErrorWithoutQueryStringWithoutBody(t *testing.T) {
 	assert.NotEmpty(t, output)
 }
 
-func TestCallApiCommandWithoutErrorWithQueryStringWithoutBody(t *testing.T) {
+func TestCallApiQueryWithoutErrorWithQueryStringWithoutBody(t *testing.T) {
 	mockController := gomock.NewController(t)
 
 	signatureBuilderMock := generatedMocks.NewMockISignatureBuilder(mockController)
@@ -112,7 +112,7 @@ func TestCallApiCommandWithoutErrorWithQueryStringWithoutBody(t *testing.T) {
 		PassPhrase: "phrase",
 		SecretKey:  "secret",
 	}
-	parameters := &bitgetModel.ApiCommandParameters{
+	parameters := &bitgetModel.ApiQueryParameters{
 		Route: "/api/v2/public/time?param1=yesterday",
 	}
 
@@ -121,7 +121,7 @@ func TestCallApiCommandWithoutErrorWithQueryStringWithoutBody(t *testing.T) {
 		Sign(gomock.Eq([]byte(strconv.FormatInt(int64(time.Now().UnixNano()/1000000), 10) + "GET/api/v2/public/time?param1=yesterday"))).
 		Times(1)
 
-	api := NewBitgetApiCommand(accountCfg, signatureBuilderMock)
+	api := NewBitgetApiQuery(accountCfg, signatureBuilderMock)
 
 	output, err := api.Get(parameters)
 

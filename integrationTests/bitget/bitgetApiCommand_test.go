@@ -70,3 +70,33 @@ func TestCallApiQueryGetWithSignature(t *testing.T) {
 	assert.NotEmpty(t, output)
 	assert.Equal(t, "{\"code\":\"00000\",\"msg\":\"success\"", output.(string)[0:31])
 }
+
+func TestCallApiQueryGetSpotFills(t *testing.T) {
+	configLoader := configuration.NewConfigurationLoaderFromJsonFile[configModel.GlobalConfiguration]("/src/integrationTests/files/globalConfig.json")
+	globalConfig, _ := configLoader.Load()
+
+	signBuilder := bitget.NewBitgetApiSignatureBuilder(
+		globalConfig.BitgetAccount,
+		security.NewSha256Crypter(),
+		externalTools.NewBase64Encoder())
+
+	api := bitget.NewBitgetApiQuery(
+		globalConfig.BitgetAccount,
+		signBuilder)
+
+	routeBuilder := externalTools.NewApiRouteBuilder()
+
+	spotFillGetter := bitget.NewBitgetSpotFillsGetter(api, routeBuilder)
+
+	parameters := &bitgetModel.SpotGetFillQueryParameters{
+		Symbol: "BTCUSDT",
+	}
+
+	output, err := spotFillGetter.Get(parameters)
+
+	assert.Nil(t, err)
+	assert.NotNil(t, output)
+
+	assert.NotEmpty(t, output)
+	assert.Equal(t, "{\"code\":\"00000\",\"msg\":\"success\"", output.(string)[0:31])
+}

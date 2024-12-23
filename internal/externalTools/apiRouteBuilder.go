@@ -1,6 +1,7 @@
 package externalTools
 
 import (
+	"sort"
 	"strings"
 )
 
@@ -22,7 +23,15 @@ func (b *ApiRouteBuilder) BuildRoute(
 		builder.WriteString(route)
 	}
 
-	for key, value := range parameters {
+	sortedKeys := make([]string, len(parameters))
+	i := 0
+	for key, _ := range parameters {
+		sortedKeys[i] = key
+		i++
+	}
+	sort.Strings(sortedKeys)
+
+	for _, key := range sortedKeys {
 		if firstParam {
 			builder.WriteString("?")
 			firstParam = false
@@ -31,7 +40,7 @@ func (b *ApiRouteBuilder) BuildRoute(
 		}
 		builder.WriteString(key)
 		builder.WriteString("=")
-		builder.WriteString(value)
+		builder.WriteString(parameters[key])
 	}
 
 	return builder.String()

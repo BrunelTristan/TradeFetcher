@@ -2,7 +2,6 @@ package externalTools
 
 import (
 	"github.com/stretchr/testify/assert"
-	"strings"
 	"testing"
 )
 
@@ -72,16 +71,7 @@ func TestBuildRealRoute(t *testing.T) {
 	route := builder.BuildRoute(routes, params)
 
 	assert.NotNil(t, route)
-	// params order are not mandatory
-	// TODO With Bitget it should order alphabeticaly
-	//assert.Equal(t, "/myPath/isNotHere/ButThere?p1=high&a25=plane&what=theF", route)
-	assert.Len(t, route, len("/myPath/isNotHere/ButThere?p1=high&a25=plane&what=theF"))
-	assert.True(t, strings.HasPrefix(route, "/myPath/isNotHere/ButThere?"))
-	assert.True(t, strings.Contains(route, "p1=high"))
-	assert.True(t, strings.Contains(route, "a25=plane"))
-	assert.True(t, strings.Contains(route, "what=theF"))
-	assert.True(t, strings.Contains(route, "&"))
-	assert.False(t, strings.Contains(route, "&&"))
+	assert.Equal(t, "/myPath/isNotHere/ButThere?a25=plane&p1=high&what=theF", route)
 }
 
 // TODO manage special chars

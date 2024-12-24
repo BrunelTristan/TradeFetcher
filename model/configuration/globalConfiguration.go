@@ -5,5 +5,6 @@ import (
 )
 
 type GlobalConfiguration struct {
-	BitgetAccount *bitget.AccountConfiguration
+	BitgetAccount    *bitget.AccountConfiguration
+	BitgetSpotAssets []string
 }

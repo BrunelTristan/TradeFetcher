@@ -8,7 +8,7 @@ import (
 )
 
 func TestMain(t *testing.T) {
-	conf := &configuration.CmdLineConfiguration{}
+	conf := &configuration.CmdLineConfiguration{ConfigFilePath: "/src/integrationTests/files/globalConfig.json"}
 
 	root := composition.NewCompositionRoot(conf)
 

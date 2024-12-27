@@ -32,6 +32,7 @@ func (f BitgetSpotFetcher) FetchLastTrades() ([]trading.Trade, error) {
 	trades := make([]trading.Trade, 0)
 
 	for _, asset := range f.assetsList {
+		// TODO use go routine for multi threading
 		list, err := f.fetchLastTradesForAsset(asset)
 
 		if err != nil {

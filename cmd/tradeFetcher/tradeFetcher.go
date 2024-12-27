@@ -16,6 +16,7 @@ const (
 func readFlags() (shouldDisplayVersion bool, conf *configuration.CmdLineConfiguration) {
 	conf = &configuration.CmdLineConfiguration{}
 	showVersion := flag.Bool("v", false, "display version")
+	flag.StringVar(&conf.ConfigFilePath, "cfg", "", "file path to configuration file")
 
 	flag.Parse()
 

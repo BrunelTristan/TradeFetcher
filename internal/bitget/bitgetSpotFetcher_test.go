@@ -225,7 +225,9 @@ func TestBitgetSpotFetcherFetchLastTradesWitFeesFloatingError(t *testing.T) {
 					Side:   "sell",
 					Price:  "46",
 					Size:   "0.0054",
-					Fees:   "hundred",
+					FeeDetail: &bitgetModel.ApiFeeDetail{
+						FeesValue:   "hundred",
+					},
 				},
 			},
 		}, nil)
@@ -280,14 +282,18 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 					Side:   "sell",
 					Price:  "106452.12",
 					Size:   "0.0054",
-					Fees:   "0.0007",
+					FeeDetail: &bitgetModel.ApiFeeDetail{
+						FeesValue:   "0.0007",
+					},
 				},
 				&bitgetModel.ApiSpotFill{
 					Symbol: "BTCUSDT",
 					Side:   "sell",
 					Price:  "98456.74",
 					Size:   "0.0012",
-					Fees:   "0.000048",
+					FeeDetail: &bitgetModel.ApiFeeDetail{
+						FeesValue:   "0.000048",
+					},
 				},
 			},
 		}, nil)
@@ -303,7 +309,9 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 					Side:   "buy",
 					Price:  "4000.01",
 					Size:   "0.004",
-					Fees:   "0.00017",
+					FeeDetail: &bitgetModel.ApiFeeDetail{
+						FeesValue:   "0.00017",
+					},
 				},
 			},
 		}, nil)
@@ -319,21 +327,27 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 					Side:   "buy",
 					Price:  "0.03654",
 					Size:   "1234.785",
-					Fees:   "0.0012",
+					FeeDetail: &bitgetModel.ApiFeeDetail{
+						FeesValue:   "0.0012",
+					},
 				},
 				&bitgetModel.ApiSpotFill{
 					Symbol: "LINKBTC",
 					Side:   "buy",
 					Price:  "0.03654",
 					Size:   "6547.13",
-					Fees:   "0.0048",
+					FeeDetail: &bitgetModel.ApiFeeDetail{
+						FeesValue:   "0.0048",
+					},
 				},
 				&bitgetModel.ApiSpotFill{
 					Symbol: "LINKBTC",
 					Side:   "sell",
 					Price:  "0.04012",
 					Size:   "5555.55",
-					Fees:   "0.0037",
+					FeeDetail: &bitgetModel.ApiFeeDetail{
+						FeesValue:   "0.0037",
+					},
 				},
 			},
 		}, nil)

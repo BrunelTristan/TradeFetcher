@@ -83,7 +83,7 @@ func (f BitgetSpotFetcher) fetchLastTradesForAsset(asset string) ([]trading.Trad
 			return nil, err
 		}
 
-		err = f.convertFloat64FromString(trade.Fees, "Fees", &trades[index].Fees)
+		err = f.convertFloat64FromString(trade.FeeDetail.FeesValue, "Fees", &trades[index].Fees)
 		if err != nil {
 			return nil, err
 		}

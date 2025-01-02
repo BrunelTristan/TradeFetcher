@@ -226,7 +226,7 @@ func TestBitgetSpotFetcherFetchLastTradesWitFeesFloatingError(t *testing.T) {
 					Price:  "46",
 					Size:   "0.0054",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
-						FeesValue:   "hundred",
+						FeesValue: "hundred",
 					},
 				},
 			},
@@ -283,7 +283,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 					Price:  "106452.12",
 					Size:   "0.0054",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
-						FeesValue:   "0.0007",
+						FeesValue: "0.0007",
 					},
 				},
 				&bitgetModel.ApiSpotFill{
@@ -292,7 +292,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 					Price:  "98456.74",
 					Size:   "0.0012",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
-						FeesValue:   "0.000048",
+						FeesValue: "0.000048",
 					},
 				},
 			},
@@ -310,7 +310,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 					Price:  "4000.01",
 					Size:   "0.004",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
-						FeesValue:   "0.00017",
+						FeesValue: "0.00017",
 					},
 				},
 			},
@@ -328,7 +328,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 					Price:  "0.03654",
 					Size:   "1234.785",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
-						FeesValue:   "0.0012",
+						FeesValue: "0.0012",
 					},
 				},
 				&bitgetModel.ApiSpotFill{
@@ -337,7 +337,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 					Price:  "0.03654",
 					Size:   "6547.13",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
-						FeesValue:   "0.0048",
+						FeesValue: "0.0048",
 					},
 				},
 				&bitgetModel.ApiSpotFill{
@@ -346,7 +346,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 					Price:  "0.04012",
 					Size:   "5555.55",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
-						FeesValue:   "0.0037",
+						FeesValue: "0.0037",
 					},
 				},
 			},

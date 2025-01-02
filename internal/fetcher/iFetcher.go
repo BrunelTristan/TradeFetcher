@@ -5,5 +5,5 @@ import (
 )
 
 type IFetcher interface {
-	FetchLastTrades() []trading.Trade
+	FetchLastTrades() ([]trading.Trade, error)
 }

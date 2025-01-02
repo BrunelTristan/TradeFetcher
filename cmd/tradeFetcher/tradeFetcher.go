@@ -16,6 +16,7 @@ const (
 func readFlags() (shouldDisplayVersion bool, conf *configuration.CmdLineConfiguration) {
 	conf = &configuration.CmdLineConfiguration{}
 	showVersion := flag.Bool("v", false, "display version")
+	flag.StringVar(&conf.ConfigFilePath, "cfg", "", "file path to configuration file")
 
 	flag.Parse()
 
@@ -44,8 +45,15 @@ func launch(conf *configuration.CmdLineConfiguration) {
 	fetcher := root.ComposeFetcher()
 	processor := root.ComposeProcessUnit()
 
-	trades := fetcher.FetchLastTrades()
-	processor.ProcessTrades(trades)
+	if fetcher != nil && processor != nil {
+		trades, err := fetcher.FetchLastTrades()
+
+		fmt.Println(err)
+
+		processor.ProcessTrades(trades)
+	} else {
+		flag.PrintDefaults()
+	}
 }
 
 func main() {

@@ -13,8 +13,19 @@ func TestBuild(t *testing.T) {
 	root.Build()
 }
 
-func TestComposeFetcher(t *testing.T) {
-	conf := &configuration.CmdLineConfiguration{}
+func TestComposeFetcherWithoutValidConfig(t *testing.T) {
+	conf := &configuration.CmdLineConfiguration{ConfigFilePath: "nothing"}
+	root := NewCompositionRoot(conf)
+
+	root.Build()
+
+	fetcher := root.ComposeFetcher()
+
+	assert.Nil(t, fetcher)
+}
+
+func TestComposeFetcherWithValidConfig(t *testing.T) {
+	conf := &configuration.CmdLineConfiguration{ConfigFilePath: "/src/integrationTests/files/globalConfig.json"}
 	root := NewCompositionRoot(conf)
 
 	root.Build()

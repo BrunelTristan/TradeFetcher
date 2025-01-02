@@ -46,7 +46,10 @@ func launch(conf *configuration.CmdLineConfiguration) {
 	processor := root.ComposeProcessUnit()
 
 	if fetcher != nil && processor != nil {
-		trades, _ := fetcher.FetchLastTrades()
+		trades, err := fetcher.FetchLastTrades()
+
+		fmt.Println(err)
+
 		processor.ProcessTrades(trades)
 	} else {
 		flag.PrintDefaults()

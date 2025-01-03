@@ -245,6 +245,52 @@ func TestBitgetSpotFetcherFetchLastTradesWithExecutingTimeError(t *testing.T) {
 	assert.Nil(t, trades)
 }
 
+func TestBitgetSpotFetcherFetchLastTradesWithSideError(t *testing.T) {
+	mockController := gomock.NewController(t)
+
+	externalGetterMock := generatedMocks.NewMockIQuery[bitgetModel.SpotGetFillQueryParameters](mockController)
+	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
+
+	externalGetterMock.
+		EXPECT().
+		Get(gomock.Any()).
+		Times(1).
+		Return("", nil)
+
+	jsonConverterMock.
+		EXPECT().
+		Export(gomock.Any()).
+		Times(0)
+	jsonConverterMock.
+		EXPECT().
+		Import(gomock.Any()).
+		Times(1).
+		Return(&bitgetModel.ApiSpotGetFills{
+			ApiResponse: bitgetModel.ApiResponse{Code: "000"},
+			Data: []*bitgetModel.ApiSpotFill{
+				&bitgetModel.ApiSpotFill{
+					Symbol:     "BTCUSDC",
+					Side:       "bud",
+					Price:      "46",
+					LastUpdate: "1745698523",
+					Size:       "0.0054",
+					FeeDetail: &bitgetModel.ApiFeeDetail{
+						FeesValue: "0.00254",
+					},
+				},
+			},
+		}, nil)
+
+	fakeObject := NewBitgetSpotFetcher([]string{""}, externalGetterMock, jsonConverterMock)
+
+	assert.NotNil(t, fakeObject)
+
+	trades, err := fakeObject.FetchLastTrades()
+
+	assert.True(t, errors.As(err, new(*error.BitgetError)))
+	assert.Nil(t, trades)
+}
+
 func TestBitgetSpotFetcherFetchLastTradesWitFeesFloatingError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
@@ -423,30 +469,36 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 		assert.Equal(t, 0.0054, trades[0].Quantity)
 		assert.Equal(t, 0.0007, trades[0].Fees)
 		assert.Equal(t, int64(123456789), trades[0].ExecutedTimestamp)
+		assert.False(t, trades[0].Open)
 		assert.Equal(t, "BTCUSDT", trades[1].Pair)
 		assert.Equal(t, 98456.74, trades[1].Price)
 		assert.Equal(t, 0.0012, trades[1].Quantity)
 		assert.Equal(t, 0.000048, trades[1].Fees)
 		assert.Equal(t, int64(145623456), trades[1].ExecutedTimestamp)
+		assert.False(t, trades[1].Open)
 		assert.Equal(t, "ETHUSDC", trades[2].Pair)
 		assert.Equal(t, 4000.01, trades[2].Price)
 		assert.Equal(t, 0.004, trades[2].Quantity)
 		assert.Equal(t, 0.00017, trades[2].Fees)
 		assert.Equal(t, int64(65478325), trades[2].ExecutedTimestamp)
+		assert.True(t, trades[2].Open)
 		assert.Equal(t, "LINKBTC", trades[3].Pair)
 		assert.Equal(t, 0.03654, trades[3].Price)
 		assert.Equal(t, 1234.785, trades[3].Quantity)
 		assert.Equal(t, 0.0012, trades[3].Fees)
 		assert.Equal(t, int64(16549876), trades[3].ExecutedTimestamp)
+		assert.True(t, trades[3].Open)
 		assert.Equal(t, "LINKBTC", trades[4].Pair)
 		assert.Equal(t, 0.03654, trades[4].Price)
 		assert.Equal(t, 6547.13, trades[4].Quantity)
 		assert.Equal(t, 0.0048, trades[4].Fees)
 		assert.Equal(t, int64(16549976), trades[4].ExecutedTimestamp)
+		assert.True(t, trades[4].Open)
 		assert.Equal(t, "LINKBTC", trades[5].Pair)
 		assert.Equal(t, 0.04012, trades[5].Price)
 		assert.Equal(t, 5555.55, trades[5].Quantity)
 		assert.Equal(t, 0.0037, trades[5].Fees)
 		assert.Equal(t, int64(16550876), trades[5].ExecutedTimestamp)
+		assert.False(t, trades[5].Open)
 	}
 }

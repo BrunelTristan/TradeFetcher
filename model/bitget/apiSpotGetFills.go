@@ -1,5 +1,8 @@
 package bitget
 
+const BUY_KEYWORD = "buy"
+const SELL_KEYWORD = "sell"
+
 type ApiFeeDetail struct {
 	FeesValue string `json:"totalFee"`
 	FeeToken  string `json:"feeCoin"`

@@ -94,6 +94,17 @@ func (f BitgetSpotFetcher) fetchLastTradesForAsset(asset string) ([]trading.Trad
 		if err != nil {
 			return nil, err
 		}
+
+		if trade.Side == bitgetModel.BUY_KEYWORD {
+			trades[index].Open = true
+		} else if trade.Side == bitgetModel.SELL_KEYWORD {
+			trades[index].Open = false
+		} else {
+			return nil, &customError.BitgetError{
+				Code:    9999,
+				Message: fmt.Sprintf("Side conversion to Open/Close error on : %s", trade.Side),
+			}
+		}
 	}
 
 	return trades, nil

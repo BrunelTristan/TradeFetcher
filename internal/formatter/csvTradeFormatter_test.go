@@ -21,6 +21,7 @@ func TestFormatOpenOrder(t *testing.T) {
 		Price:             1.23,
 		Quantity:          98.74,
 		Open:              true,
+		Long:              false,
 		Fees:              0.00256,
 	}
 
@@ -28,7 +29,7 @@ func TestFormatOpenOrder(t *testing.T) {
 
 	output := formatter.Format(&trade)
 
-	assert.Equal(t, "172345687,O,testingToken;1.23000000;98.74000000;0.00256000", output)
+	assert.Equal(t, "172345687,O,S,testingToken;1.23000000;98.74000000;0.00256000", output)
 }
 
 func TestFormatCloseOrder(t *testing.T) {
@@ -40,6 +41,7 @@ func TestFormatCloseOrder(t *testing.T) {
 		Price:             1.23,
 		Quantity:          98.74,
 		Open:              false,
+		Long:              true,
 		Fees:              0.00256,
 	}
 
@@ -47,5 +49,5 @@ func TestFormatCloseOrder(t *testing.T) {
 
 	output := formatter.Format(&trade)
 
-	assert.Equal(t, "172345687,C,testingToken;1.23000000;98.74000000;0.00256000", output)
+	assert.Equal(t, "172345687,C,L,testingToken;1.23000000;98.74000000;0.00256000", output)
 }

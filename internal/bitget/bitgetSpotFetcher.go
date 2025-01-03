@@ -72,6 +72,7 @@ func (f BitgetSpotFetcher) fetchLastTradesForAsset(asset string) ([]trading.Trad
 	for index, trade := range apiResponse.Data {
 		// TODO convert in a dedicated converter struct
 		trades[index].Pair = trade.Symbol
+		trades[index].Long = true
 
 		err = f.convertFloat64FromString(trade.Price, "Price", &trades[index].Price)
 		if err != nil {

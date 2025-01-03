@@ -14,7 +14,8 @@ func NewCsvTradeFormatter() ITradeFormatter {
 
 func (t CsvTradeFormatter) Format(trade *trading.Trade) string {
 	return fmt.Sprintf(
-		"%s;%.8f;%.8f;%.8f",
+		"%d,%s;%.8f;%.8f;%.8f",
+		trade.ExecutedTimestamp,
 		trade.Pair,
 		trade.Price,
 		trade.Quantity,

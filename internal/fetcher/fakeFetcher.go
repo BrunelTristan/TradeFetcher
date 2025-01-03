@@ -25,6 +25,7 @@ func (f FakeFetcher) FetchLastTrades() ([]trading.Trade, error) {
 		trades[index].Price = rand.Float64()
 		trades[index].Quantity = rand.Float64()
 		trades[index].Fees = rand.Float64()
+		trades[index].ExecutedTimestamp = rand.Int64()
 	}
 
 	return trades, nil

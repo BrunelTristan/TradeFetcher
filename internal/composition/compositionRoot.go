@@ -41,7 +41,7 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 	return fetcher.NewSortByDateFetcherDecorator(
 		fetcher.NewBitgetFetcher(
 			bitget.NewBitgetSpotFetcher(
-				[]string{"XRPUSDT"},
+				c.globalConfig.BitgetSpotAssets,
 				bitget.NewBitgetSpotFillsGetter(
 					bitget.NewBitgetApiQuery(
 						c.globalConfig.BitgetAccount,

@@ -30,7 +30,7 @@ func (t CsvTradeFormatter) Format(trade *trading.Trade) string {
 		openClose,
 		longShort,
 		trade.Pair,
-		trade.Price,
 		trade.Quantity,
+		trade.Price,
 		trade.Fees)
 }

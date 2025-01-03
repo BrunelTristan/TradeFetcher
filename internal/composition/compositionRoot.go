@@ -29,7 +29,6 @@ func NewCompositionRoot(conf *configModel.CmdLineConfiguration) *CompositionRoot
 }
 
 func (c *CompositionRoot) Build() {
-	// TODO load from config
 	c.configLoader = configuration.NewConfigurationLoaderFromJsonFile[configModel.GlobalConfiguration](c.startupConfiguration.ConfigFilePath)
 	c.globalConfig, _ = c.configLoader.Load()
 }

@@ -11,6 +11,8 @@ INTERFACE_FILES=$(wildcard $(SRCDIR)/*/*/i[A-Z]*.go $(SRCDIR)/*/i[A-Z]*.go $(SRC
 TEST_PACKAGE_WITHOUT_COVERAGE=tradeFetcher/integrationTests
 EXCLUDED_PACKAGE_FOR_BENCHMARK=$(shell go list ./... | grep -v generatedMocks | grep -v model/)
 EXCLUDED_PACKAGE_FOR_COVERAGE=$(filter-out $(TEST_PACKAGE_WITHOUT_COVERAGE), $(EXCLUDED_PACKAGE_FOR_BENCHMARK))
+COVERAGE_FILE=coverOutput.cov
+TARGET_COVERAGE_PERCENT=99.9
 
 .PHONY: all clear 
 
@@ -38,8 +40,12 @@ run-tests: mock-generator $(TST_FILES)
 	@echo "${_RED}  --LAUNCH TESTS ${_END}"
 	
 	go mod tidy
-	go test -cover -v $(EXCLUDED_PACKAGE_FOR_COVERAGE)
+	go test -cover -coverprofile=$(COVERAGE_FILE) -v $(EXCLUDED_PACKAGE_FOR_COVERAGE) 
 	go test -v $(TEST_PACKAGE_WITHOUT_COVERAGE)
+	@ACTUAL_COVERAGE=`go tool cover -func $(COVERAGE_FILE) | tail -n 1 | awk -F '[ \t]+' '{print $$3}' | cut -d '%' -f1`; \
+	COVERAGE_COMPARAISON_RESULT=`echo "$$ACTUAL_COVERAGE <= $(TARGET_COVERAGE_PERCENT)" | bc`; \
+	if [ $$COVERAGE_COMPARAISON_RESULT -eq 1 ]; then exit "Insufisent coverage $$ACTUAL_COVERAGE%"; fi;
+
 	go test -bench=. $(EXCLUDED_PACKAGE_FOR_BENCHMARK)
 
 list-todo:

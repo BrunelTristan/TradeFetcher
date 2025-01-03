@@ -13,6 +13,7 @@ EXCLUDED_PACKAGE_FOR_BENCHMARK=$(shell go list ./... | grep -v generatedMocks | 
 EXCLUDED_PACKAGE_FOR_COVERAGE=$(filter-out $(TEST_PACKAGE_WITHOUT_COVERAGE), $(EXCLUDED_PACKAGE_FOR_BENCHMARK))
 COVERAGE_FILE=coverOutput.cov
 TARGET_COVERAGE_PERCENT=99.9
+EXCLUDE_FOLDER_FOR_TODO=./.git
 
 .PHONY: all clear 
 
@@ -50,7 +51,7 @@ run-tests: mock-generator $(TST_FILES)
 
 list-todo:
 	@echo "${_RED}  --LOOKING FOR TODO ${_END}"
-	@grep -I -ri 'todo ' $(SRCDIR) | grep -v 'makefile:' || true
+	@grep -I -ri 'todo ' $(SRCDIR) | grep -v '$(EXCLUDE_FOLDER_FOR_TODO)' | grep -v 'makefile:' || true
 	
 release: test-branch-master $(EXEC) test-release-version
 	

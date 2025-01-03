@@ -38,20 +38,22 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 		return nil
 	}
 
-	return fetcher.NewBitgetFetcher(
-		bitget.NewBitgetSpotFetcher(
-			[]string{"XRPUSDT"},
-			bitget.NewBitgetSpotFillsGetter(
-				bitget.NewBitgetApiQuery(
-					c.globalConfig.BitgetAccount,
-					bitget.NewBitgetApiSignatureBuilder(
+	return fetcher.NewSortByDateFetcherDecorator(
+		fetcher.NewBitgetFetcher(
+			bitget.NewBitgetSpotFetcher(
+				[]string{"XRPUSDT"},
+				bitget.NewBitgetSpotFillsGetter(
+					bitget.NewBitgetApiQuery(
 						c.globalConfig.BitgetAccount,
-						security.NewSha256Crypter(),
-						externalTools.NewBase64Encoder()),
+						bitget.NewBitgetApiSignatureBuilder(
+							c.globalConfig.BitgetAccount,
+							security.NewSha256Crypter(),
+							externalTools.NewBase64Encoder()),
+					),
+					externalTools.NewApiRouteBuilder(),
 				),
-				externalTools.NewApiRouteBuilder(),
+				json.NewJsonConverter[bitgetModel.ApiSpotGetFills](),
 			),
-			json.NewJsonConverter[bitgetModel.ApiSpotGetFills](),
 		),
 	)
 }

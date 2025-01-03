@@ -137,10 +137,11 @@ func TestBitgetSpotFetcherFetchLastTradesWithPriceFloatingError(t *testing.T) {
 			ApiResponse: bitgetModel.ApiResponse{Code: "000"},
 			Data: []*bitgetModel.ApiSpotFill{
 				&bitgetModel.ApiSpotFill{
-					Symbol: "BTCUSDC",
-					Side:   "sell",
-					Price:  "abc",
-					Size:   "0.0054",
+					Symbol:     "BTCUSDC",
+					Side:       "sell",
+					Price:      "abc",
+					LastUpdate: "123456",
+					Size:       "0.0054",
 				},
 			},
 		}, nil)
@@ -179,10 +180,103 @@ func TestBitgetSpotFetcherFetchLastTradesWithQuantityFloatingError(t *testing.T)
 			ApiResponse: bitgetModel.ApiResponse{Code: "000"},
 			Data: []*bitgetModel.ApiSpotFill{
 				&bitgetModel.ApiSpotFill{
-					Symbol: "BTCUSDC",
-					Side:   "sell",
-					Price:  "46",
-					Size:   "0..0054",
+					Symbol:     "BTCUSDC",
+					Side:       "sell",
+					Price:      "46",
+					LastUpdate: "123456",
+					Size:       "0..0054",
+				},
+			},
+		}, nil)
+
+	fakeObject := NewBitgetSpotFetcher([]string{""}, externalGetterMock, jsonConverterMock)
+
+	assert.NotNil(t, fakeObject)
+
+	trades, err := fakeObject.FetchLastTrades()
+
+	assert.True(t, errors.As(err, new(*error.BitgetError)))
+	assert.Nil(t, trades)
+}
+
+func TestBitgetSpotFetcherFetchLastTradesWithExecutingTimeError(t *testing.T) {
+	mockController := gomock.NewController(t)
+
+	externalGetterMock := generatedMocks.NewMockIQuery[bitgetModel.SpotGetFillQueryParameters](mockController)
+	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
+
+	externalGetterMock.
+		EXPECT().
+		Get(gomock.Any()).
+		Times(1).
+		Return("", nil)
+
+	jsonConverterMock.
+		EXPECT().
+		Export(gomock.Any()).
+		Times(0)
+	jsonConverterMock.
+		EXPECT().
+		Import(gomock.Any()).
+		Times(1).
+		Return(&bitgetModel.ApiSpotGetFills{
+			ApiResponse: bitgetModel.ApiResponse{Code: "000"},
+			Data: []*bitgetModel.ApiSpotFill{
+				&bitgetModel.ApiSpotFill{
+					Symbol:     "BTCUSDC",
+					Side:       "sell",
+					Price:      "46",
+					LastUpdate: "abcsde",
+					Size:       "0.0054",
+					FeeDetail: &bitgetModel.ApiFeeDetail{
+						FeesValue: "0.00254",
+					},
+				},
+			},
+		}, nil)
+
+	fakeObject := NewBitgetSpotFetcher([]string{""}, externalGetterMock, jsonConverterMock)
+
+	assert.NotNil(t, fakeObject)
+
+	trades, err := fakeObject.FetchLastTrades()
+
+	assert.True(t, errors.As(err, new(*error.BitgetError)))
+	assert.Nil(t, trades)
+}
+
+func TestBitgetSpotFetcherFetchLastTradesWithSideError(t *testing.T) {
+	mockController := gomock.NewController(t)
+
+	externalGetterMock := generatedMocks.NewMockIQuery[bitgetModel.SpotGetFillQueryParameters](mockController)
+	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
+
+	externalGetterMock.
+		EXPECT().
+		Get(gomock.Any()).
+		Times(1).
+		Return("", nil)
+
+	jsonConverterMock.
+		EXPECT().
+		Export(gomock.Any()).
+		Times(0)
+	jsonConverterMock.
+		EXPECT().
+		Import(gomock.Any()).
+		Times(1).
+		Return(&bitgetModel.ApiSpotGetFills{
+			ApiResponse: bitgetModel.ApiResponse{Code: "000"},
+			Data: []*bitgetModel.ApiSpotFill{
+				&bitgetModel.ApiSpotFill{
+					Symbol:     "BTCUSDC",
+					Side:       "bud",
+					Price:      "46",
+					LastUpdate: "1745698523",
+					Size:       "0.0054",
+					FeeDetail: &bitgetModel.ApiFeeDetail{
+						FeesValue: "0.00254",
+					},
 				},
 			},
 		}, nil)
@@ -221,10 +315,11 @@ func TestBitgetSpotFetcherFetchLastTradesWitFeesFloatingError(t *testing.T) {
 			ApiResponse: bitgetModel.ApiResponse{Code: "000"},
 			Data: []*bitgetModel.ApiSpotFill{
 				&bitgetModel.ApiSpotFill{
-					Symbol: "BTCUSDC",
-					Side:   "sell",
-					Price:  "46",
-					Size:   "0.0054",
+					Symbol:     "BTCUSDC",
+					Side:       "sell",
+					Price:      "46",
+					LastUpdate: "123456",
+					Size:       "0.0054",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
 						FeesValue: "hundred",
 					},
@@ -278,19 +373,21 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 			ApiResponse: bitgetModel.ApiResponse{Code: "000"},
 			Data: []*bitgetModel.ApiSpotFill{
 				&bitgetModel.ApiSpotFill{
-					Symbol: "BTCUSDT",
-					Side:   "sell",
-					Price:  "106452.12",
-					Size:   "0.0054",
+					Symbol:     "BTCUSDT",
+					Side:       "sell",
+					Price:      "106452.12",
+					LastUpdate: "123456789648",
+					Size:       "0.0054",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
 						FeesValue: "0.0007",
 					},
 				},
 				&bitgetModel.ApiSpotFill{
-					Symbol: "BTCUSDT",
-					Side:   "sell",
-					Price:  "98456.74",
-					Size:   "0.0012",
+					Symbol:     "BTCUSDT",
+					Side:       "sell",
+					Price:      "98456.74",
+					LastUpdate: "145623456146",
+					Size:       "0.0012",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
 						FeesValue: "0.000048",
 					},
@@ -305,10 +402,11 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 			ApiResponse: bitgetModel.ApiResponse{Code: "000"},
 			Data: []*bitgetModel.ApiSpotFill{
 				&bitgetModel.ApiSpotFill{
-					Symbol: "ETHUSDC",
-					Side:   "buy",
-					Price:  "4000.01",
-					Size:   "0.004",
+					Symbol:     "ETHUSDC",
+					Side:       "buy",
+					Price:      "4000.01",
+					Size:       "0.004",
+					LastUpdate: "65478325555",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
 						FeesValue: "0.00017",
 					},
@@ -323,28 +421,31 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 			ApiResponse: bitgetModel.ApiResponse{Code: "000"},
 			Data: []*bitgetModel.ApiSpotFill{
 				&bitgetModel.ApiSpotFill{
-					Symbol: "LINKBTC",
-					Side:   "buy",
-					Price:  "0.03654",
-					Size:   "1234.785",
+					Symbol:     "LINKBTC",
+					Side:       "buy",
+					Price:      "0.03654",
+					LastUpdate: "16549876877",
+					Size:       "1234.785",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
 						FeesValue: "0.0012",
 					},
 				},
 				&bitgetModel.ApiSpotFill{
-					Symbol: "LINKBTC",
-					Side:   "buy",
-					Price:  "0.03654",
-					Size:   "6547.13",
+					Symbol:     "LINKBTC",
+					Side:       "buy",
+					Price:      "0.03654",
+					LastUpdate: "16549976789",
+					Size:       "6547.13",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
 						FeesValue: "0.0048",
 					},
 				},
 				&bitgetModel.ApiSpotFill{
-					Symbol: "LINKBTC",
-					Side:   "sell",
-					Price:  "0.04012",
-					Size:   "5555.55",
+					Symbol:     "LINKBTC",
+					Side:       "sell",
+					Price:      "0.04012",
+					LastUpdate: "16550876654",
+					Size:       "5555.55",
 					FeeDetail: &bitgetModel.ApiFeeDetail{
 						FeesValue: "0.0037",
 					},
@@ -367,25 +468,43 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 		assert.Equal(t, 106452.12, trades[0].Price)
 		assert.Equal(t, 0.0054, trades[0].Quantity)
 		assert.Equal(t, 0.0007, trades[0].Fees)
+		assert.Equal(t, int64(123456789), trades[0].ExecutedTimestamp)
+		assert.False(t, trades[0].Open)
+		assert.True(t, trades[0].Long)
 		assert.Equal(t, "BTCUSDT", trades[1].Pair)
 		assert.Equal(t, 98456.74, trades[1].Price)
 		assert.Equal(t, 0.0012, trades[1].Quantity)
 		assert.Equal(t, 0.000048, trades[1].Fees)
+		assert.Equal(t, int64(145623456), trades[1].ExecutedTimestamp)
+		assert.False(t, trades[1].Open)
+		assert.True(t, trades[1].Long)
 		assert.Equal(t, "ETHUSDC", trades[2].Pair)
 		assert.Equal(t, 4000.01, trades[2].Price)
 		assert.Equal(t, 0.004, trades[2].Quantity)
 		assert.Equal(t, 0.00017, trades[2].Fees)
+		assert.Equal(t, int64(65478325), trades[2].ExecutedTimestamp)
+		assert.True(t, trades[2].Open)
+		assert.True(t, trades[2].Long)
 		assert.Equal(t, "LINKBTC", trades[3].Pair)
 		assert.Equal(t, 0.03654, trades[3].Price)
 		assert.Equal(t, 1234.785, trades[3].Quantity)
 		assert.Equal(t, 0.0012, trades[3].Fees)
+		assert.Equal(t, int64(16549876), trades[3].ExecutedTimestamp)
+		assert.True(t, trades[3].Open)
+		assert.True(t, trades[3].Long)
 		assert.Equal(t, "LINKBTC", trades[4].Pair)
 		assert.Equal(t, 0.03654, trades[4].Price)
 		assert.Equal(t, 6547.13, trades[4].Quantity)
 		assert.Equal(t, 0.0048, trades[4].Fees)
+		assert.Equal(t, int64(16549976), trades[4].ExecutedTimestamp)
+		assert.True(t, trades[4].Open)
+		assert.True(t, trades[4].Long)
 		assert.Equal(t, "LINKBTC", trades[5].Pair)
 		assert.Equal(t, 0.04012, trades[5].Price)
 		assert.Equal(t, 5555.55, trades[5].Quantity)
 		assert.Equal(t, 0.0037, trades[5].Fees)
+		assert.Equal(t, int64(16550876), trades[5].ExecutedTimestamp)
+		assert.False(t, trades[5].Open)
+		assert.True(t, trades[5].Long)
 	}
 }

@@ -12,19 +12,42 @@ func TestNewCsvTradeFormatter(t *testing.T) {
 	assert.NotNil(t, formatter)
 }
 
-func TestFormat(t *testing.T) {
+func TestFormatOpenOrder(t *testing.T) {
 	formatter := NewCsvTradeFormatter()
 
 	trade := trading.Trade{
-		Pair:     "testingToken",
-		Price:    1.23,
-		Quantity: 98.74,
-		Fees:     0.00256,
+		Pair:              "testingToken",
+		ExecutedTimestamp: 172345687,
+		Price:             1.23,
+		Quantity:          98.74,
+		Open:              true,
+		Long:              false,
+		Fees:              0.00256,
 	}
 
 	assert.NotNil(t, formatter)
 
 	output := formatter.Format(&trade)
 
-	assert.Equal(t, "testingToken;1.23000000;98.74000000;0.00256000", output)
+	assert.Equal(t, "172345687,O,S,testingToken;98.74000000;1.23000000;0.00256000", output)
+}
+
+func TestFormatCloseOrder(t *testing.T) {
+	formatter := NewCsvTradeFormatter()
+
+	trade := trading.Trade{
+		Pair:              "testingToken",
+		ExecutedTimestamp: 172345687,
+		Price:             1.23,
+		Quantity:          98.74,
+		Open:              false,
+		Long:              true,
+		Fees:              0.00256,
+	}
+
+	assert.NotNil(t, formatter)
+
+	output := formatter.Format(&trade)
+
+	assert.Equal(t, "172345687,C,L,testingToken;98.74000000;1.23000000;0.00256000", output)
 }

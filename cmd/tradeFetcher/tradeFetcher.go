@@ -9,8 +9,8 @@ import (
 
 const (
 	major = 1
-	minor = 0
-	patch = 1
+	minor = 1
+	patch = 0
 )
 
 func readFlags() (shouldDisplayVersion bool, conf *configuration.CmdLineConfiguration) {

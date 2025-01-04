@@ -11,7 +11,7 @@ import (
 )
 
 func TestNewBitgetFetcher(t *testing.T) {
-	fakeObject := NewBitgetFetcher(nil, nil)
+	fakeObject := NewBitgetFetcher(nil)
 
 	assert.NotNil(t, fakeObject)
 }
@@ -32,7 +32,7 @@ func TestBitgetFetcherFetchLastTradesWithErrorOnSpotFetcher(t *testing.T) {
 		FetchLastTrades().
 		Times(0)
 
-	fakeObject := NewBitgetFetcher(spotFetcherMock, futureFetcherMock)
+	fakeObject := NewBitgetFetcher([]IFetcher{spotFetcherMock, futureFetcherMock})
 
 	assert.NotNil(t, fakeObject)
 
@@ -59,7 +59,7 @@ func TestBitgetFetcherFetchLastTradesWithErrorOnFutureFetcher(t *testing.T) {
 		Times(1).
 		Return(nil, &error.RestApiError{HttpCode: 502})
 
-	fakeObject := NewBitgetFetcher(spotFetcherMock, futureFetcherMock)
+	fakeObject := NewBitgetFetcher([]IFetcher{spotFetcherMock, futureFetcherMock})
 
 	assert.NotNil(t, fakeObject)
 
@@ -78,15 +78,15 @@ func TestBitgetFetcherFetchLastTrades(t *testing.T) {
 	spotFetcherMock.
 		EXPECT().
 		FetchLastTrades().
-		Times(1).
+		Times(2).
 		Return(make([]trading.Trade, 7), nil)
 	futureFetcherMock.
 		EXPECT().
 		FetchLastTrades().
-		Times(1).
+		Times(3).
 		Return(make([]trading.Trade, 5), nil)
 
-	fakeObject := NewBitgetFetcher(spotFetcherMock, futureFetcherMock)
+	fakeObject := NewBitgetFetcher([]IFetcher{futureFetcherMock, spotFetcherMock, futureFetcherMock, futureFetcherMock, spotFetcherMock})
 
 	assert.NotNil(t, fakeObject)
 
@@ -96,5 +96,5 @@ func TestBitgetFetcherFetchLastTrades(t *testing.T) {
 	assert.NotNil(t, trades)
 	assert.NotEmpty(t, trades)
 
-	assert.Equal(t, 12, len(trades))
+	assert.Equal(t, 29, len(trades))
 }

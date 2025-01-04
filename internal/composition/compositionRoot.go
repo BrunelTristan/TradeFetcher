@@ -53,21 +53,23 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 
 	return fetcher.NewSortByDateFetcherDecorator(
 		fetcher.NewBitgetFetcher(
-			bitget.NewBitgetSpotFetcher(
-				c.globalConfig.BitgetSpotAssets,
-				bitget.NewBitgetSpotFillsGetter(
-					c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(*bitget.BitgetApiQuery),
-					c.singletons["IApiRouteBuilder"].(*externalTools.ApiRouteBuilder),
+			[]fetcher.IFetcher{
+				bitget.NewBitgetSpotFetcher(
+					c.globalConfig.BitgetSpotAssets,
+					bitget.NewBitgetSpotFillsGetter(
+						c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(*bitget.BitgetApiQuery),
+						c.singletons["IApiRouteBuilder"].(*externalTools.ApiRouteBuilder),
+					),
+					json.NewJsonConverter[bitgetModel.ApiSpotGetFills](),
 				),
-				json.NewJsonConverter[bitgetModel.ApiSpotGetFills](),
-			),
-			bitget.NewBitgetFutureFetcher(
-				bitget.NewBitgetFutureTransactionsGetter(
-					c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(*bitget.BitgetApiQuery),
-					c.singletons["IApiRouteBuilder"].(*externalTools.ApiRouteBuilder),
+				bitget.NewBitgetFutureFetcher(
+					bitget.NewBitgetFutureTransactionsGetter(
+						c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(*bitget.BitgetApiQuery),
+						c.singletons["IApiRouteBuilder"].(*externalTools.ApiRouteBuilder),
+					),
+					json.NewJsonConverter[bitgetModel.ApiFutureTransactions](),
 				),
-				json.NewJsonConverter[bitgetModel.ApiFutureTransactions](),
-			),
+			},
 		),
 	)
 }

@@ -5,34 +5,29 @@ import (
 )
 
 type BitgetFetcher struct {
-	spotFetcher   IFetcher
-	futureFetcher IFetcher
+	fetchers []IFetcher
 }
 
 func NewBitgetFetcher(
-	sFetcher IFetcher,
-	fFetcher IFetcher,
+	fetchs []IFetcher,
 ) IFetcher {
 	return &BitgetFetcher{
-		spotFetcher:   sFetcher,
-		futureFetcher: fFetcher,
+		fetchers: fetchs,
 	}
 }
 
 func (f BitgetFetcher) FetchLastTrades() ([]trading.Trade, error) {
-	trades, err := f.spotFetcher.FetchLastTrades()
+	trades := make([]trading.Trade, 0)
 
-	if err != nil {
-		return nil, err
+	for _, fetcher := range f.fetchers {
+		list, err := fetcher.FetchLastTrades()
+
+		if err != nil {
+			return nil, err
+		}
+
+		trades = append(trades, list...)
 	}
 
-	list, err := f.futureFetcher.FetchLastTrades()
-
-	if err != nil {
-		return nil, err
-	}
-
-	trades = append(trades, list...)
-
-	return trades, err
+	return trades, nil
 }

@@ -88,7 +88,7 @@ func (f BitgetFutureFetcher) FetchLastTrades() ([]trading.Trade, error) {
 		} else {
 			return nil, &customError.BitgetError{
 				Code:    9999,
-				Message: fmt.Sprintf("Side conversion  error on : %s", trade.Side),
+				Message: fmt.Sprintf("Side conversion error on : %s", trade.Side),
 			}
 		}
 
@@ -103,7 +103,7 @@ func (f BitgetFutureFetcher) FetchLastTrades() ([]trading.Trade, error) {
 		} else {
 			return nil, &customError.BitgetError{
 				Code:    9999,
-				Message: fmt.Sprintf("Open/Close conversion  error on : %s", trade.TradeSide),
+				Message: fmt.Sprintf("Open/Close conversion error on : %s", trade.TradeSide),
 			}
 		}
 	}

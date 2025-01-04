@@ -81,6 +81,8 @@ func (f BitgetFutureFetcher) FetchLastTrades() ([]trading.Trade, error) {
 			return nil, err
 		}
 
+		trades[index].Fees *= -1
+
 		if trade.Side == bitgetModel.BUY_KEYWORD {
 			trades[index].Long = true
 		} else if trade.Side == bitgetModel.SELL_KEYWORD {

@@ -890,7 +890,7 @@ func TestBitgetFutureFetcherFetchLastTradesWithoutError(t *testing.T) {
 						TradeSide:  "sell",
 						FeeDetail: []*bitgetModel.ApiFeeDetail{
 							&bitgetModel.ApiFeeDetail{
-								FeesValue: "0.0012",
+								FeesValue: "-0.0012",
 							},
 						},
 					},
@@ -903,7 +903,7 @@ func TestBitgetFutureFetcherFetchLastTradesWithoutError(t *testing.T) {
 						TradeSide:  "close",
 						FeeDetail: []*bitgetModel.ApiFeeDetail{
 							&bitgetModel.ApiFeeDetail{
-								FeesValue: "0.0048",
+								FeesValue: "-0.0048",
 							},
 						},
 					},
@@ -916,7 +916,7 @@ func TestBitgetFutureFetcherFetchLastTradesWithoutError(t *testing.T) {
 						TradeSide:  "ffgdgrgsella",
 						FeeDetail: []*bitgetModel.ApiFeeDetail{
 							&bitgetModel.ApiFeeDetail{
-								FeesValue: "0.0037",
+								FeesValue: "-0.0037",
 							},
 						},
 					},

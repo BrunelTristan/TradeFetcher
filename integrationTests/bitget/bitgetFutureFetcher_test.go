@@ -38,8 +38,7 @@ func TestBitgetFutureFetcherFetchLastTradesWithRealData(t *testing.T) {
 		assert.Equal(t, 0.02, trades[0].Quantity)
 		assert.Equal(t, -0.02161596, trades[0].Fees)
 		assert.Equal(t, int64(1698730804), trades[0].ExecutedTimestamp)
-		assert.False(t, trades[0].Open)
-		assert.True(t, trades[0].Long)
-		// TODO manage Long/Short
+		assert.True(t, trades[0].Open)
+		assert.False(t, trades[0].Long)
 	}
 }

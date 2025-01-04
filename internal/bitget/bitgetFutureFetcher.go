@@ -5,6 +5,7 @@ package bitget
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"tradeFetcher/internal/common"
 	"tradeFetcher/internal/fetcher"
 	"tradeFetcher/internal/json"
@@ -81,13 +82,28 @@ func (f BitgetFutureFetcher) FetchLastTrades() ([]trading.Trade, error) {
 		}
 
 		if trade.Side == bitgetModel.BUY_KEYWORD {
-			trades[index].Open = true
+			trades[index].Long = true
 		} else if trade.Side == bitgetModel.SELL_KEYWORD {
-			trades[index].Open = false
+			trades[index].Long = false
 		} else {
 			return nil, &customError.BitgetError{
 				Code:    9999,
-				Message: fmt.Sprintf("Side conversion to Open/Close error on : %s", trade.Side),
+				Message: fmt.Sprintf("Side conversion  error on : %s", trade.Side),
+			}
+		}
+
+		if strings.Contains(trade.TradeSide, bitgetModel.OPEN_KEYWORD) {
+			trades[index].Open = true
+		} else if strings.Contains(trade.TradeSide, bitgetModel.CLOSE_KEYWORD) {
+			trades[index].Open = false
+		} else if strings.Contains(trade.TradeSide, bitgetModel.BUY_KEYWORD) {
+			trades[index].Open = trades[index].Long
+		} else if strings.Contains(trade.TradeSide, bitgetModel.SELL_KEYWORD) {
+			trades[index].Open = !trades[index].Long
+		} else {
+			return nil, &customError.BitgetError{
+				Code:    9999,
+				Message: fmt.Sprintf("Open/Close conversion  error on : %s", trade.TradeSide),
 			}
 		}
 	}

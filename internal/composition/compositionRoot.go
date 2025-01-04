@@ -1,7 +1,6 @@
 package composition
 
 import (
-	"reflect"
 	"tradeFetcher/internal/bitget"
 	"tradeFetcher/internal/configuration"
 	"tradeFetcher/internal/externalTools"
@@ -15,7 +14,7 @@ import (
 )
 
 type CompositionRoot struct {
-	singletons           map[reflect.Type]interface{}
+	singletons           map[string]interface{}
 	startupConfiguration *configModel.CmdLineConfiguration
 	configLoader         configuration.IConfigurationLoader[configModel.GlobalConfiguration]
 	globalConfig         *configModel.GlobalConfiguration
@@ -23,7 +22,7 @@ type CompositionRoot struct {
 
 func NewCompositionRoot(conf *configModel.CmdLineConfiguration) *CompositionRoot {
 	return &CompositionRoot{
-		singletons:           make(map[reflect.Type]interface{}),
+		singletons:           make(map[string]interface{}),
 		startupConfiguration: conf,
 	}
 }
@@ -31,6 +30,20 @@ func NewCompositionRoot(conf *configModel.CmdLineConfiguration) *CompositionRoot
 func (c *CompositionRoot) Build() {
 	c.configLoader = configuration.NewConfigurationLoaderFromJsonFile[configModel.GlobalConfiguration](c.startupConfiguration.ConfigFilePath)
 	c.globalConfig, _ = c.configLoader.Load()
+
+	if c.globalConfig == nil {
+		return
+	}
+
+	c.singletons["IQuery[bitgetModel.ApiQueryParameters]"] = bitget.NewBitgetApiQuery(
+		c.globalConfig.BitgetAccount,
+		bitget.NewBitgetApiSignatureBuilder(
+			c.globalConfig.BitgetAccount,
+			security.NewSha256Crypter(),
+			externalTools.NewBase64Encoder()),
+	)
+
+	c.singletons["IApiRouteBuilder"] = externalTools.NewApiRouteBuilder()
 }
 
 func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
@@ -43,16 +56,17 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 			bitget.NewBitgetSpotFetcher(
 				c.globalConfig.BitgetSpotAssets,
 				bitget.NewBitgetSpotFillsGetter(
-					bitget.NewBitgetApiQuery(
-						c.globalConfig.BitgetAccount,
-						bitget.NewBitgetApiSignatureBuilder(
-							c.globalConfig.BitgetAccount,
-							security.NewSha256Crypter(),
-							externalTools.NewBase64Encoder()),
-					),
-					externalTools.NewApiRouteBuilder(),
+					c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(*bitget.BitgetApiQuery),
+					c.singletons["IApiRouteBuilder"].(*externalTools.ApiRouteBuilder),
 				),
 				json.NewJsonConverter[bitgetModel.ApiSpotGetFills](),
+			),
+			bitget.NewBitgetFutureFetcher(
+				bitget.NewBitgetFutureTransactionsGetter(
+					c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(*bitget.BitgetApiQuery),
+					c.singletons["IApiRouteBuilder"].(*externalTools.ApiRouteBuilder),
+				),
+				json.NewJsonConverter[bitgetModel.ApiFutureTransactions](),
 			),
 		),
 	)

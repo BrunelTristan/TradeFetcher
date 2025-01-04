@@ -12,41 +12,24 @@ import (
 )
 
 type BitgetSpotFetcher struct {
-	assetsList        []string
+	asset             string
 	tradeGetter       common.IQuery[bitgetModel.SpotGetFillQueryParameters]
 	spotFillConverter json.IJsonConverter[bitgetModel.ApiSpotGetFills]
 }
 
 func NewBitgetSpotFetcher(
-	assets []string,
+	assetToFetch string,
 	tGetter common.IQuery[bitgetModel.SpotGetFillQueryParameters],
 	converter json.IJsonConverter[bitgetModel.ApiSpotGetFills]) fetcher.IFetcher {
 	return &BitgetSpotFetcher{
-		assetsList:        assets,
+		asset:             assetToFetch,
 		tradeGetter:       tGetter,
 		spotFillConverter: converter,
 	}
 }
 
 func (f BitgetSpotFetcher) FetchLastTrades() ([]trading.Trade, error) {
-	trades := make([]trading.Trade, 0)
-
-	for _, asset := range f.assetsList {
-		// TODO use go routine for multi threading
-		list, err := f.fetchLastTradesForAsset(asset)
-
-		if err != nil {
-			return nil, err
-		}
-
-		trades = append(trades, list...)
-	}
-
-	return trades, nil
-}
-
-func (f BitgetSpotFetcher) fetchLastTradesForAsset(asset string) ([]trading.Trade, error) {
-	jsonGet, err := f.tradeGetter.Get(&bitgetModel.SpotGetFillQueryParameters{Symbol: asset})
+	jsonGet, err := f.tradeGetter.Get(&bitgetModel.SpotGetFillQueryParameters{Symbol: f.asset})
 
 	if err != nil {
 		return nil, err

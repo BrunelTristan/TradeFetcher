@@ -233,8 +233,10 @@ func TestBitgetFutureFetcherFetchLastTradesWithExecutingTimeError(t *testing.T) 
 						Price:      "46",
 						LastUpdate: "abcsde",
 						Size:       "0.0054",
-						FeeDetail: &bitgetModel.ApiFeeDetail{
-							FeesValue: "0.00254",
+						FeeDetail: []*bitgetModel.ApiFeeDetail{
+							&bitgetModel.ApiFeeDetail{
+								FeesValue: "0.00254",
+							},
 						},
 					},
 				},
@@ -281,8 +283,10 @@ func TestBitgetFutureFetcherFetchLastTradesWithSideError(t *testing.T) {
 						Price:      "46",
 						LastUpdate: "1745698523",
 						Size:       "0.0054",
-						FeeDetail: &bitgetModel.ApiFeeDetail{
-							FeesValue: "0.00254",
+						FeeDetail: []*bitgetModel.ApiFeeDetail{
+							&bitgetModel.ApiFeeDetail{
+								FeesValue: "0.00254",
+							},
 						},
 					},
 				},
@@ -329,8 +333,10 @@ func TestBitgetFutureFetcherFetchLastTradesWitFeesFloatingError(t *testing.T) {
 						Price:      "46",
 						LastUpdate: "123456",
 						Size:       "0.0054",
-						FeeDetail: &bitgetModel.ApiFeeDetail{
-							FeesValue: "hundred",
+						FeeDetail: []*bitgetModel.ApiFeeDetail{
+							&bitgetModel.ApiFeeDetail{
+								FeesValue: "something",
+							},
 						},
 					},
 				},
@@ -377,8 +383,10 @@ func TestBitgetFutureFetcherFetchLastTradesWithoutError(t *testing.T) {
 						Price:      "0.03654",
 						LastUpdate: "16549876877",
 						Size:       "1234.785",
-						FeeDetail: &bitgetModel.ApiFeeDetail{
-							FeesValue: "0.0012",
+						FeeDetail: []*bitgetModel.ApiFeeDetail{
+							&bitgetModel.ApiFeeDetail{
+								FeesValue: "0.0012",
+							},
 						},
 					},
 					&bitgetModel.ApiFutureTransaction{
@@ -387,8 +395,10 @@ func TestBitgetFutureFetcherFetchLastTradesWithoutError(t *testing.T) {
 						Price:      "0.03654",
 						LastUpdate: "16549976789",
 						Size:       "6547.13",
-						FeeDetail: &bitgetModel.ApiFeeDetail{
-							FeesValue: "0.0048",
+						FeeDetail: []*bitgetModel.ApiFeeDetail{
+							&bitgetModel.ApiFeeDetail{
+								FeesValue: "0.0048",
+							},
 						},
 					},
 					&bitgetModel.ApiFutureTransaction{
@@ -397,8 +407,10 @@ func TestBitgetFutureFetcherFetchLastTradesWithoutError(t *testing.T) {
 						Price:      "0.04012",
 						LastUpdate: "16550876654",
 						Size:       "5555.55",
-						FeeDetail: &bitgetModel.ApiFeeDetail{
-							FeesValue: "0.0037",
+						FeeDetail: []*bitgetModel.ApiFeeDetail{
+							&bitgetModel.ApiFeeDetail{
+								FeesValue: "0.0037",
+							},
 						},
 					},
 				},

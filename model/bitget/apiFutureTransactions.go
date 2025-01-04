@@ -4,9 +4,9 @@ type ApiFutureTransaction struct {
 	Symbol     string
 	Side       string
 	Price      string
-	Size       string `json:"volume"`
-	LastUpdate string `json:"uTime"`
-	FeeDetail  *ApiFeeDetail
+	Size       string `json:"baseVolume"`
+	LastUpdate string `json:"cTime"`
+	FeeDetail  []*ApiFeeDetail
 }
 
 type ApiFutureTransactionsList struct {

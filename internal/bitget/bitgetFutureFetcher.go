@@ -74,7 +74,8 @@ func (f BitgetFutureFetcher) FetchLastTrades() ([]trading.Trade, error) {
 
 		trades[index].ExecutedTimestamp /= 1000
 
-		err = f.convertFloat64FromString(trade.FeeDetail.FeesValue, "Fees", &trades[index].Fees)
+		// TODO manage multi fees
+		err = f.convertFloat64FromString(trade.FeeDetail[0].FeesValue, "Fees", &trades[index].Fees)
 		if err != nil {
 			return nil, err
 		}

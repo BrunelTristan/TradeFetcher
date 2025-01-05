@@ -3,20 +3,21 @@ package bitget
 import (
 	"fmt"
 	"strconv"
+	"strings"
 	"tradeFetcher/internal/converter"
 	bitgetModel "tradeFetcher/model/bitget"
 	customError "tradeFetcher/model/error"
 	"tradeFetcher/model/trading"
 )
 
-type SpotFillToTradeConverter struct {
+type FutureTransactionsToTradeConverter struct {
 }
 
-func NewSpotFillToTradeConverter() converter.IStructConverter[bitgetModel.ApiSpotFill, trading.Trade] {
-	return &SpotFillToTradeConverter{}
+func NewFutureTransactionsToTradeConverter() converter.IStructConverter[bitgetModel.ApiFutureTransaction, trading.Trade] {
+	return &FutureTransactionsToTradeConverter{}
 }
 
-func (c *SpotFillToTradeConverter) Convert(parameters *bitgetModel.ApiSpotFill) (*trading.Trade, error) {
+func (c *FutureTransactionsToTradeConverter) Convert(parameters *bitgetModel.ApiFutureTransaction) (*trading.Trade, error) {
 	if parameters == nil {
 		return nil, nil
 	}
@@ -43,12 +44,12 @@ func (c *SpotFillToTradeConverter) Convert(parameters *bitgetModel.ApiSpotFill) 
 	}
 	trade.Quantity = floatVal
 
-	floatVal, err = strconv.ParseFloat(parameters.FeeDetail.FeesValue, 64)
+	floatVal, err = strconv.ParseFloat(parameters.FeeDetail[0].FeesValue, 64)
 	if err != nil {
 		return nil, c.buildConvertionError(
 			"FeeDetail.FeesValue",
 			"Fees",
-			parameters.FeeDetail.FeesValue,
+			parameters.FeeDetail[0].FeesValue,
 			" is not a float 64")
 	}
 	trade.Fees = floatVal
@@ -64,21 +65,42 @@ func (c *SpotFillToTradeConverter) Convert(parameters *bitgetModel.ApiSpotFill) 
 	trade.ExecutedTimestamp = intVal / 1000
 
 	if parameters.Side == bitgetModel.BUY_KEYWORD {
-		trade.Open = true
+		trade.Long = true
 	} else if parameters.Side == bitgetModel.SELL_KEYWORD {
-		trade.Open = false
+		trade.Long = false
 	} else {
 		return nil, c.buildConvertionError(
 			"Side",
-			"Open",
+			"Long",
 			parameters.Side,
 			fmt.Sprintf(" is not %s or %s", bitgetModel.BUY_KEYWORD, bitgetModel.SELL_KEYWORD))
+	}
+
+	if strings.Contains(parameters.TradeSide, bitgetModel.OPEN_KEYWORD) {
+		trade.Open = true
+	} else if strings.Contains(parameters.TradeSide, bitgetModel.CLOSE_KEYWORD) {
+		trade.Open = false
+	} else if strings.Contains(parameters.TradeSide, bitgetModel.BUY_KEYWORD) {
+		trade.Open = trade.Long
+	} else if strings.Contains(parameters.TradeSide, bitgetModel.SELL_KEYWORD) {
+		trade.Open = !trade.Long
+	} else {
+		return nil, c.buildConvertionError(
+			"TradeSide",
+			"Open",
+			parameters.TradeSide,
+			fmt.Sprintf(" does not contain %s, %s, %s or %s",
+				bitgetModel.BUY_KEYWORD,
+				bitgetModel.SELL_KEYWORD,
+				bitgetModel.OPEN_KEYWORD,
+				bitgetModel.CLOSE_KEYWORD,
+			))
 	}
 
 	return trade, nil
 }
 
-func (c *SpotFillToTradeConverter) buildConvertionError(
+func (c *FutureTransactionsToTradeConverter) buildConvertionError(
 	inputField string,
 	outputField string,
 	value string,
@@ -87,7 +109,7 @@ func (c *SpotFillToTradeConverter) buildConvertionError(
 	return &customError.ConversionError{
 		InputField:   inputField,
 		OutputField:  outputField,
-		InputStruct:  "bitgetModel.ApiSpotFill",
+		InputStruct:  "bitgetModel.ApiFutureTransaction",
 		OutputStruct: "trading.Trade",
 		Message:      fmt.Sprintf("%s %s", value, message),
 	}

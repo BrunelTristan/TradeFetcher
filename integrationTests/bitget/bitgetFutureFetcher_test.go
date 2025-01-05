@@ -15,6 +15,7 @@ func TestBitgetFutureFetcherFetchLastTradesWithRealData(t *testing.T) {
 
 	externalGetterMock := generatedMocks.NewMockIQuery[bitgetModel.FutureTransactionsQueryParameters](mockController)
 	jsonConverter := json.NewJsonConverter[bitgetModel.ApiFutureTransactions]()
+	tradeConverter := bitget.NewFutureTransactionToTradeConverter()
 
 	externalGetterMock.
 		EXPECT().
@@ -22,7 +23,7 @@ func TestBitgetFutureFetcherFetchLastTradesWithRealData(t *testing.T) {
 		Times(1).
 		Return("{\"code\":\"00000\",\"msg\":\"success\",\"requestTime\":1699267238892,\"data\":{\"fillList\":[{\"tradeId\":\"3687452565\",\"symbol\":\"TRXUSDT\",\"orderId\":\"655446847\",\"price\":\"0.26895\",\"baseVolume\":\"112\",\"feeDetail\":[{\"deduction\":\"no\",\"feeCoin\":\"USDT\",\"totalDeductionFee\":\"0\",\"totalFee\":\"-0.01807344\"}],\"side\":\"buy\",\"quoteVolume\":\"30.1224\",\"profit\":\"0.01232\",\"enterPointSource\":\"api\",\"tradeSide\":\"close\",\"posMode\":\"hedge_mode\",\"tradeScope\":\"taker\",\"cTime\":\"1736019712144\"},{\"tradeId\":\"xxxx\",\"symbol\":\"ETHUSDT\",\"orderId\":\"xxxx\",\"price\":\"1801.33\",\"baseVolume\":\"0.02\",\"feeDetail\":[{\"deduction\":\"no\",\"feeCoin\":\"USDT\",\"totalDeductionFee\":\"0\",\"totalFee\":\"-0.02161596\"}],\"side\":\"sell\",\"quoteVolume\":\"36.0266\",\"profit\":\"0.0252\",\"enterPointSource\":\"ios\",\"tradeSide\":\"sell_single\",\"posMode\":\"one_way_mode\",\"tradeScope\":\"taker\",\"cTime\":\"1698730804882\"}],\"endId\":\"123456789\"}}", nil)
 
-	bitgetFetcher := bitget.NewBitgetFutureFetcher(externalGetterMock, jsonConverter)
+	bitgetFetcher := bitget.NewBitgetFutureFetcher(externalGetterMock, jsonConverter, tradeConverter)
 
 	assert.NotNil(t, bitgetFetcher)
 

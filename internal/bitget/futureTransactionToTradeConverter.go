@@ -10,14 +10,14 @@ import (
 	"tradeFetcher/model/trading"
 )
 
-type FutureTransactionsToTradeConverter struct {
+type FutureTransactionToTradeConverter struct {
 }
 
-func NewFutureTransactionsToTradeConverter() converter.IStructConverter[bitgetModel.ApiFutureTransaction, trading.Trade] {
-	return &FutureTransactionsToTradeConverter{}
+func NewFutureTransactionToTradeConverter() converter.IStructConverter[bitgetModel.ApiFutureTransaction, trading.Trade] {
+	return &FutureTransactionToTradeConverter{}
 }
 
-func (c *FutureTransactionsToTradeConverter) Convert(parameters *bitgetModel.ApiFutureTransaction) (*trading.Trade, error) {
+func (c *FutureTransactionToTradeConverter) Convert(parameters *bitgetModel.ApiFutureTransaction) (*trading.Trade, error) {
 	if parameters == nil {
 		return nil, nil
 	}
@@ -52,7 +52,7 @@ func (c *FutureTransactionsToTradeConverter) Convert(parameters *bitgetModel.Api
 			parameters.FeeDetail[0].FeesValue,
 			" is not a float 64")
 	}
-	trade.Fees = floatVal
+	trade.Fees = -floatVal
 
 	intVal, err := strconv.ParseInt(parameters.LastUpdate, 10, 64)
 	if err != nil {
@@ -100,7 +100,7 @@ func (c *FutureTransactionsToTradeConverter) Convert(parameters *bitgetModel.Api
 	return trade, nil
 }
 
-func (c *FutureTransactionsToTradeConverter) buildConvertionError(
+func (c *FutureTransactionToTradeConverter) buildConvertionError(
 	inputField string,
 	outputField string,
 	value string,

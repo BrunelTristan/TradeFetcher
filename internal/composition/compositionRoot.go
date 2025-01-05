@@ -40,7 +40,9 @@ func (c *CompositionRoot) Build() {
 
 	c.singletons["IApiRouteBuilder"] = externalTools.NewApiRouteBuilder()
 	c.singletons["IJsonConverter[bitgetModel.ApiSpotGetFills]"] = json.NewJsonConverter[bitgetModel.ApiSpotGetFills]()
+	c.singletons["IJsonConverter[bitgetModel.ApiFutureTransactions]"] = json.NewJsonConverter[bitgetModel.ApiFutureTransactions]()
 	c.singletons["IStructConverter[bitgetModel.ApiSpotGetFills,trading.Trade]"] = bitget.NewSpotFillToTradeConverter()
+	c.singletons["IStructConverter[bitgetModel.ApiFutureTransaction,trading.Trade]"] = bitget.NewFutureTransactionToTradeConverter()
 
 	c.singletons["IQuery[bitgetModel.ApiQueryParameters]"] = bitget.NewBitgetApiQuery(
 		c.globalConfig.BitgetAccount,
@@ -67,7 +69,8 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 				c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
 				c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
 			),
-			json.NewJsonConverter[bitgetModel.ApiFutureTransactions](),
+			c.singletons["IJsonConverter[bitgetModel.ApiFutureTransactions]"].(json.IJsonConverter[bitgetModel.ApiFutureTransactions]),
+			c.singletons["IStructConverter[bitgetModel.ApiFutureTransaction,trading.Trade]"].(converter.IStructConverter[bitgetModel.ApiFutureTransaction, trading.Trade]),
 		),
 	}
 

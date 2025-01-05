@@ -2,7 +2,9 @@ package composition
 
 import (
 	"tradeFetcher/internal/bitget"
+	"tradeFetcher/internal/common"
 	"tradeFetcher/internal/configuration"
+	"tradeFetcher/internal/converter"
 	"tradeFetcher/internal/externalTools"
 	"tradeFetcher/internal/fetcher"
 	"tradeFetcher/internal/formatter"
@@ -11,6 +13,7 @@ import (
 	"tradeFetcher/internal/security"
 	bitgetModel "tradeFetcher/model/bitget"
 	configModel "tradeFetcher/model/configuration"
+	"tradeFetcher/model/trading"
 )
 
 type CompositionRoot struct {
@@ -37,6 +40,7 @@ func (c *CompositionRoot) Build() {
 
 	c.singletons["IApiRouteBuilder"] = externalTools.NewApiRouteBuilder()
 	c.singletons["IJsonConverter[bitgetModel.ApiSpotGetFills]"] = json.NewJsonConverter[bitgetModel.ApiSpotGetFills]()
+	c.singletons["IStructConverter[bitgetModel.ApiSpotGetFills,trading.Trade]"] = bitget.NewSpotFillToTradeConverter()
 
 	c.singletons["IQuery[bitgetModel.ApiQueryParameters]"] = bitget.NewBitgetApiQuery(
 		c.globalConfig.BitgetAccount,
@@ -47,8 +51,8 @@ func (c *CompositionRoot) Build() {
 	)
 
 	c.singletons["IQuery[bitgetModel.SpotGetFillQueryParameters]"] = bitget.NewBitgetSpotFillsGetter(
-		c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(*bitget.BitgetApiQuery),
-		c.singletons["IApiRouteBuilder"].(*externalTools.ApiRouteBuilder),
+		c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
+		c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
 	)
 }
 
@@ -60,8 +64,8 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 	bitgetFetcherList := []fetcher.IFetcher{
 		bitget.NewBitgetFutureFetcher(
 			bitget.NewBitgetFutureTransactionsGetter(
-				c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(*bitget.BitgetApiQuery),
-				c.singletons["IApiRouteBuilder"].(*externalTools.ApiRouteBuilder),
+				c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
+				c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
 			),
 			json.NewJsonConverter[bitgetModel.ApiFutureTransactions](),
 		),
@@ -72,8 +76,9 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 			bitgetFetcherList,
 			bitget.NewBitgetSpotFetcher(
 				asset,
-				c.singletons["IQuery[bitgetModel.SpotGetFillQueryParameters]"].(*bitget.BitgetSpotFillsGetter),
-				c.singletons["IJsonConverter[bitgetModel.ApiSpotGetFills]"].(*json.JsonConverter[bitgetModel.ApiSpotGetFills]),
+				c.singletons["IQuery[bitgetModel.SpotGetFillQueryParameters]"].(common.IQuery[bitgetModel.SpotGetFillQueryParameters]),
+				c.singletons["IJsonConverter[bitgetModel.ApiSpotGetFills]"].(json.IJsonConverter[bitgetModel.ApiSpotGetFills]),
+				c.singletons["IStructConverter[bitgetModel.ApiSpotGetFills,trading.Trade]"].(converter.IStructConverter[bitgetModel.ApiSpotFill, trading.Trade]),
 			),
 		)
 	}

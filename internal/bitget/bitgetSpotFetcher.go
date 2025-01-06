@@ -12,28 +12,30 @@ import (
 )
 
 type BitgetSpotFetcher struct {
-	asset             string
-	tradeGetter       common.IQuery[bitgetModel.SpotGetFillQueryParameters]
-	spotFillConverter json.IJsonConverter[bitgetModel.ApiSpotGetFills]
-	tradeConverter    converter.IStructConverter[bitgetModel.ApiSpotFill, trading.Trade]
+	queryParametersBuilder common.IQueryParametersBuilder[bitgetModel.SpotGetFillQueryParameters]
+	tradeGetter            common.IQuery[bitgetModel.SpotGetFillQueryParameters]
+	spotFillConverter      json.IJsonConverter[bitgetModel.ApiSpotGetFills]
+	tradeConverter         converter.IStructConverter[bitgetModel.ApiSpotFill, trading.Trade]
 }
 
 func NewBitgetSpotFetcher(
-	assetToFetch string,
+	paramBuilder common.IQueryParametersBuilder[bitgetModel.SpotGetFillQueryParameters],
 	tGetter common.IQuery[bitgetModel.SpotGetFillQueryParameters],
 	jConverter json.IJsonConverter[bitgetModel.ApiSpotGetFills],
 	tConverter converter.IStructConverter[bitgetModel.ApiSpotFill, trading.Trade],
 ) fetcher.IFetcher {
 	return &BitgetSpotFetcher{
-		asset:             assetToFetch,
-		tradeGetter:       tGetter,
-		spotFillConverter: jConverter,
-		tradeConverter:    tConverter,
+		queryParametersBuilder: paramBuilder,
+		tradeGetter:            tGetter,
+		spotFillConverter:      jConverter,
+		tradeConverter:         tConverter,
 	}
 }
 
 func (f BitgetSpotFetcher) FetchLastTrades() ([]trading.Trade, error) {
-	jsonGet, err := f.tradeGetter.Get(&bitgetModel.SpotGetFillQueryParameters{Symbol: f.asset})
+	getParams, _ := f.queryParametersBuilder.BuildQueryParameters()
+
+	jsonGet, err := f.tradeGetter.Get(getParams)
 
 	if err != nil {
 		return nil, err

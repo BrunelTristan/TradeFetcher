@@ -190,7 +190,7 @@ func TestBitgetFutureFetcherFetchLastTradesWithoutError(t *testing.T) {
 	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiFutureTransactions](mockController)
 	tradeConverterMock := generatedMocks.NewMockIStructConverter[bitgetModel.ApiFutureTransaction, trading.Trade](mockController)
 
-	buildedBitgetTrades := &bitgetModel.ApiFutureTransactions{
+	builtBitgetTrades := &bitgetModel.ApiFutureTransactions{
 		ApiResponse: bitgetModel.ApiResponse{Code: "000"},
 		Data: &bitgetModel.ApiFutureTransactionsList{
 			FillList: []*bitgetModel.ApiFutureTransaction{
@@ -221,21 +221,21 @@ func TestBitgetFutureFetcherFetchLastTradesWithoutError(t *testing.T) {
 		EXPECT().
 		Import(gomock.Eq("BTC")).
 		Times(1).
-		Return(buildedBitgetTrades, nil)
+		Return(builtBitgetTrades, nil)
 
 	tradeConverterMock.
 		EXPECT().
-		Convert(gomock.Eq(buildedBitgetTrades.Data.FillList[0])).
+		Convert(gomock.Eq(builtBitgetTrades.Data.FillList[0])).
 		Times(1).
 		Return(convertedTrades[0], nil)
 	tradeConverterMock.
 		EXPECT().
-		Convert(gomock.Eq(buildedBitgetTrades.Data.FillList[1])).
+		Convert(gomock.Eq(builtBitgetTrades.Data.FillList[1])).
 		Times(1).
 		Return(convertedTrades[1], nil)
 	tradeConverterMock.
 		EXPECT().
-		Convert(gomock.Eq(buildedBitgetTrades.Data.FillList[2])).
+		Convert(gomock.Eq(builtBitgetTrades.Data.FillList[2])).
 		Times(1).
 		Return(convertedTrades[2], nil)
 

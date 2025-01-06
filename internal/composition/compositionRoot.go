@@ -78,9 +78,11 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 		bitgetFetcherList = append(
 			bitgetFetcherList,
 			bitget.NewBitgetSpotFetcher(
-				bitget.NewSpotGetFillQueryParametersBuilder(asset),
-				c.singletons["IQuery[bitgetModel.SpotGetFillQueryParameters]"].(common.IQuery[bitgetModel.SpotGetFillQueryParameters]),
-				c.singletons["IJsonConverter[bitgetModel.ApiSpotGetFills]"].(json.IJsonConverter[bitgetModel.ApiSpotGetFills]),
+				bitget.NewApiQueryToStructDecorator[bitgetModel.SpotGetFillQueryParameters, bitgetModel.ApiSpotGetFills](
+					c.singletons["IQuery[bitgetModel.SpotGetFillQueryParameters]"].(common.IQuery[bitgetModel.SpotGetFillQueryParameters]),
+					bitget.NewSpotGetFillQueryParametersBuilder(asset),
+					c.singletons["IJsonConverter[bitgetModel.ApiSpotGetFills]"].(json.IJsonConverter[bitgetModel.ApiSpotGetFills]),
+				),
 				c.singletons["IStructConverter[bitgetModel.ApiSpotGetFills,trading.Trade]"].(converter.IStructConverter[bitgetModel.ApiSpotFill, trading.Trade]),
 			),
 		)

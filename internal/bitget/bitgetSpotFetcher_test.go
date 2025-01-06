@@ -13,7 +13,7 @@ import (
 )
 
 func TestNewBitgetSpotFetcher(t *testing.T) {
-	fakeObject := NewBitgetSpotFetcher(nil, nil, nil, nil)
+	fakeObject := NewBitgetSpotFetcher(nil, nil)
 
 	assert.NotNil(t, fakeObject)
 }
@@ -21,40 +21,21 @@ func TestNewBitgetSpotFetcher(t *testing.T) {
 func TestBitgetSpotFetcherFetchLastTradesWithGetError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	paramBuilderMock := generatedMocks.NewMockIQueryParametersBuilder[bitgetModel.SpotGetFillQueryParameters](mockController)
 	externalGetterMock := generatedMocks.NewMockIQuery[bitgetModel.SpotGetFillQueryParameters](mockController)
-	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
 	tradeConverterMock := generatedMocks.NewMockIStructConverter[bitgetModel.ApiSpotFill, trading.Trade](mockController)
-
-	builtParameters := &bitgetModel.SpotGetFillQueryParameters{Symbol: "SOMETHING"}
-
-	paramBuilderMock.
-		EXPECT().
-		BuildQueryParameters().
-		Times(1).
-		Return(builtParameters, nil)
 
 	externalGetterMock.
 		EXPECT().
-		Get(gomock.Eq(builtParameters)).
+		Get(gomock.Nil()).
 		Times(1).
 		Return(nil, &error.RestApiError{HttpCode: 500})
-
-	jsonConverterMock.
-		EXPECT().
-		Export(gomock.Any()).
-		Times(0)
-	jsonConverterMock.
-		EXPECT().
-		Import(gomock.Any()).
-		Times(0)
 
 	tradeConverterMock.
 		EXPECT().
 		Convert(gomock.Any()).
 		Times(0)
 
-	fakeObject := NewBitgetSpotFetcher(paramBuilderMock, externalGetterMock, jsonConverterMock, tradeConverterMock)
+	fakeObject := NewBitgetSpotFetcher(externalGetterMock, tradeConverterMock)
 
 	assert.NotNil(t, fakeObject)
 
@@ -64,82 +45,15 @@ func TestBitgetSpotFetcherFetchLastTradesWithGetError(t *testing.T) {
 	assert.Nil(t, trades)
 }
 
-func TestBitgetSpotFetcherFetchLastTradesWithJsonConvertError(t *testing.T) {
-	mockController := gomock.NewController(t)
-
-	paramBuilderMock := generatedMocks.NewMockIQueryParametersBuilder[bitgetModel.SpotGetFillQueryParameters](mockController)
-	externalGetterMock := generatedMocks.NewMockIQuery[bitgetModel.SpotGetFillQueryParameters](mockController)
-	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
-	tradeConverterMock := generatedMocks.NewMockIStructConverter[bitgetModel.ApiSpotFill, trading.Trade](mockController)
-
-	builtParameters := &bitgetModel.SpotGetFillQueryParameters{Symbol: "SOMETHING"}
-
-	paramBuilderMock.
-		EXPECT().
-		BuildQueryParameters().
-		Times(1).
-		Return(builtParameters, nil)
-
-	externalGetterMock.
-		EXPECT().
-		Get(gomock.Eq(builtParameters)).
-		Times(1).
-		Return("", nil)
-
-	jsonConverterMock.
-		EXPECT().
-		Export(gomock.Any()).
-		Times(0)
-	jsonConverterMock.
-		EXPECT().
-		Import(gomock.Any()).
-		Times(1).
-		Return(nil, &error.JsonError{})
-
-	tradeConverterMock.
-		EXPECT().
-		Convert(gomock.Any()).
-		Times(0)
-
-	fakeObject := NewBitgetSpotFetcher(paramBuilderMock, externalGetterMock, jsonConverterMock, tradeConverterMock)
-
-	assert.NotNil(t, fakeObject)
-
-	trades, err := fakeObject.FetchLastTrades()
-
-	assert.True(t, errors.As(err, new(*error.JsonError)))
-	assert.Nil(t, trades)
-}
-
 func TestBitgetSpotFetcherFetchLastTradesWithBitgetError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	paramBuilderMock := generatedMocks.NewMockIQueryParametersBuilder[bitgetModel.SpotGetFillQueryParameters](mockController)
 	externalGetterMock := generatedMocks.NewMockIQuery[bitgetModel.SpotGetFillQueryParameters](mockController)
-	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
 	tradeConverterMock := generatedMocks.NewMockIStructConverter[bitgetModel.ApiSpotFill, trading.Trade](mockController)
-
-	builtParameters := &bitgetModel.SpotGetFillQueryParameters{Symbol: "SOMETHING"}
-
-	paramBuilderMock.
-		EXPECT().
-		BuildQueryParameters().
-		Times(1).
-		Return(builtParameters, nil)
 
 	externalGetterMock.
 		EXPECT().
-		Get(gomock.Eq(builtParameters)).
-		Times(1).
-		Return("", nil)
-
-	jsonConverterMock.
-		EXPECT().
-		Export(gomock.Any()).
-		Times(0)
-	jsonConverterMock.
-		EXPECT().
-		Import(gomock.Any()).
+		Get(gomock.Nil()).
 		Times(1).
 		Return(&bitgetModel.ApiSpotGetFills{
 			ApiResponse: bitgetModel.ApiResponse{Code: "0999"},
@@ -150,7 +64,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithBitgetError(t *testing.T) {
 		Convert(gomock.Any()).
 		Times(0)
 
-	fakeObject := NewBitgetSpotFetcher(paramBuilderMock, externalGetterMock, jsonConverterMock, tradeConverterMock)
+	fakeObject := NewBitgetSpotFetcher(externalGetterMock, tradeConverterMock)
 
 	assert.NotNil(t, fakeObject)
 
@@ -163,53 +77,32 @@ func TestBitgetSpotFetcherFetchLastTradesWithBitgetError(t *testing.T) {
 func TestBitgetSpotFetcherFetchLastTradesWithTradeConversionError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	paramBuilderMock := generatedMocks.NewMockIQueryParametersBuilder[bitgetModel.SpotGetFillQueryParameters](mockController)
 	externalGetterMock := generatedMocks.NewMockIQuery[bitgetModel.SpotGetFillQueryParameters](mockController)
-	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
 	tradeConverterMock := generatedMocks.NewMockIStructConverter[bitgetModel.ApiSpotFill, trading.Trade](mockController)
 
-	builtParameters := &bitgetModel.SpotGetFillQueryParameters{Symbol: "SOMETHING"}
-
-	paramBuilderMock.
-		EXPECT().
-		BuildQueryParameters().
-		Times(1).
-		Return(builtParameters, nil)
+	apiSubObject := &bitgetModel.ApiSpotFill{
+		Symbol: "ORCAUSDT",
+	}
+	apiResponse := &bitgetModel.ApiSpotGetFills{
+		ApiResponse: bitgetModel.ApiResponse{Code: "00000"},
+		Data: []*bitgetModel.ApiSpotFill{
+			apiSubObject,
+		},
+	}
 
 	externalGetterMock.
 		EXPECT().
-		Get(gomock.Eq(builtParameters)).
+		Get(gomock.Nil()).
 		Times(1).
-		Return("", nil)
-
-	jsonConverterMock.
-		EXPECT().
-		Export(gomock.Any()).
-		Times(0)
-	jsonConverterMock.
-		EXPECT().
-		Import(gomock.Any()).
-		Times(1).
-		Return(&bitgetModel.ApiSpotGetFills{
-			ApiResponse: bitgetModel.ApiResponse{Code: "000"},
-			Data: []*bitgetModel.ApiSpotFill{
-				&bitgetModel.ApiSpotFill{
-					Symbol:     "BTCUSDC",
-					Side:       "sell",
-					Price:      "abc",
-					LastUpdate: "123456",
-					Size:       "0.0054",
-				},
-			},
-		}, nil)
-
+		Return(apiResponse, nil)
+		
 	tradeConverterMock.
 		EXPECT().
-		Convert(gomock.Any()).
+		Convert(gomock.Eq(apiSubObject)).
 		Times(1).
 		Return(nil, &error.ConversionError{Message: "Conversion error message"})
 
-	fakeObject := NewBitgetSpotFetcher(paramBuilderMock, externalGetterMock, jsonConverterMock, tradeConverterMock)
+	fakeObject := NewBitgetSpotFetcher(externalGetterMock, tradeConverterMock)
 
 	assert.NotNil(t, fakeObject)
 
@@ -226,9 +119,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithTradeConversionError(t *testing.T) 
 func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 	mockController := gomock.NewController(t)
 
-	paramBuilderMock := generatedMocks.NewMockIQueryParametersBuilder[bitgetModel.SpotGetFillQueryParameters](mockController)
 	externalGetterMock := generatedMocks.NewMockIQuery[bitgetModel.SpotGetFillQueryParameters](mockController)
-	jsonConverterMock := generatedMocks.NewMockIJsonConverter[bitgetModel.ApiSpotGetFills](mockController)
 	tradeConverterMock := generatedMocks.NewMockIStructConverter[bitgetModel.ApiSpotFill, trading.Trade](mockController)
 
 	builtBitgetTrades := &bitgetModel.ApiSpotGetFills{
@@ -273,47 +164,21 @@ func TestBitgetSpotFetcherFetchLastTradesWithoutError(t *testing.T) {
 		&trading.Trade{Pair: "CDE"},
 	}
 
-	builtParameters := &bitgetModel.SpotGetFillQueryParameters{Symbol: "SOMETHING"}
-
-	paramBuilderMock.
-		EXPECT().
-		BuildQueryParameters().
-		Times(1).
-		Return(builtParameters, nil)
-
 	externalGetterMock.
 		EXPECT().
-		Get(gomock.Eq(builtParameters)).
-		Times(1).
-		Return("LINK", nil)
-
-	jsonConverterMock.
-		EXPECT().
-		Export(gomock.Any()).
-		Times(0)
-	jsonConverterMock.
-		EXPECT().
-		Import(gomock.Eq("LINK")).
+		Get(gomock.Nil()).
 		Times(1).
 		Return(builtBitgetTrades, nil)
 
-	tradeConverterMock.
-		EXPECT().
-		Convert(gomock.Eq(builtBitgetTrades.Data[0])).
-		Times(1).
-		Return(convertedTrades[0], nil)
-	tradeConverterMock.
-		EXPECT().
-		Convert(gomock.Eq(builtBitgetTrades.Data[1])).
-		Times(1).
-		Return(convertedTrades[1], nil)
-	tradeConverterMock.
-		EXPECT().
-		Convert(gomock.Eq(builtBitgetTrades.Data[2])).
-		Times(1).
-		Return(convertedTrades[2], nil)
+	for index, trade := range builtBitgetTrades.Data {
+		tradeConverterMock.
+			EXPECT().
+			Convert(gomock.Eq(trade)).
+			Times(1).
+			Return(convertedTrades[index], nil)
+	}
 
-	fakeObject := NewBitgetSpotFetcher(paramBuilderMock, externalGetterMock, jsonConverterMock, tradeConverterMock)
+	fakeObject := NewBitgetSpotFetcher(externalGetterMock, tradeConverterMock)
 
 	assert.NotNil(t, fakeObject)
 

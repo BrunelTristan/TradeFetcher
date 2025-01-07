@@ -10,8 +10,8 @@ import (
 	"tradeFetcher/model/error"
 )
 
-func TestNewBitgetSpotFillsGetter(t *testing.T) {
-	fakeObject := NewBitgetSpotFillsGetter(nil, nil)
+func TestNewSpotFillsGetter(t *testing.T) {
+	fakeObject := NewSpotFillsGetter(nil, nil)
 
 	assert.NotNil(t, fakeObject)
 }
@@ -32,7 +32,7 @@ func TestGetSpotFillsWithNilParameters(t *testing.T) {
 		BuildRoute(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	fakeObject := NewBitgetSpotFillsGetter(apiGetterMock, routeBuilderMock)
+	fakeObject := NewSpotFillsGetter(apiGetterMock, routeBuilderMock)
 
 	output, err := fakeObject.Get(nil)
 
@@ -67,7 +67,7 @@ func TestGetSpotFillsWithBitgetError(t *testing.T) {
 		Times(1).
 		Return(expectedApiParameters.Route)
 
-	fakeObject := NewBitgetSpotFillsGetter(apiGetterMock, routeBuilderMock)
+	fakeObject := NewSpotFillsGetter(apiGetterMock, routeBuilderMock)
 
 	output, err := fakeObject.Get(parameters)
 
@@ -102,7 +102,7 @@ func TestGetSpotFillsWithoutError(t *testing.T) {
 		Times(1).
 		Return(expectedApiParameters.Route)
 
-	fakeObject := NewBitgetSpotFillsGetter(apiGetterMock, routeBuilderMock)
+	fakeObject := NewSpotFillsGetter(apiGetterMock, routeBuilderMock)
 
 	output, err := fakeObject.Get(parameters)
 

@@ -4,32 +4,27 @@ import (
 	"tradeFetcher/internal/common"
 	"tradeFetcher/internal/externalTools"
 	bitgetModel "tradeFetcher/model/bitget"
-	customError "tradeFetcher/model/error"
 )
 
-type BitgetSpotFillsGetter struct {
+type FutureTransactionsGetter struct {
 	apiQuery     common.IQuery[bitgetModel.ApiQueryParameters]
 	routeBuilder externalTools.IApiRouteBuilder
 }
 
-func NewBitgetSpotFillsGetter(
+func NewFutureTransactionsGetter(
 	aQuery common.IQuery[bitgetModel.ApiQueryParameters],
 	rBuilder externalTools.IApiRouteBuilder,
-) common.IQuery[bitgetModel.SpotGetFillQueryParameters] {
-	return &BitgetSpotFillsGetter{
+) common.IQuery[bitgetModel.FutureTransactionsQueryParameters] {
+	return &FutureTransactionsGetter{
 		apiQuery:     aQuery,
 		routeBuilder: rBuilder,
 	}
 }
 
-func (g *BitgetSpotFillsGetter) Get(parameters *bitgetModel.SpotGetFillQueryParameters) (interface{}, error) {
-	if parameters == nil {
-		return nil, &customError.RestApiError{HttpCode: 999}
-	}
-
+func (g *FutureTransactionsGetter) Get(parameters *bitgetModel.FutureTransactionsQueryParameters) (interface{}, error) {
 	route := g.routeBuilder.BuildRoute(
-		[]string{bitgetModel.SPOT_ROOT_ROUTE, bitgetModel.SPOT_GET_FILLS_SUB_ROUTE},
-		map[string]string{"symbol": parameters.Symbol},
+		[]string{bitgetModel.FUTURE_ROOT_ROUTE, bitgetModel.FUTURE_GET_TRANSACTION_SUB_ROUTE},
+		map[string]string{"productType": "USDT-FUTURES"},
 	)
 
 	return g.apiQuery.Get(&bitgetModel.ApiQueryParameters{

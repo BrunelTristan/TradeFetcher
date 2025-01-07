@@ -3,11 +3,6 @@ package bitget
 const BUY_KEYWORD = "buy"
 const SELL_KEYWORD = "sell"
 
-type ApiFeeDetail struct {
-	FeesValue string `json:"totalFee"`
-	FeeToken  string `json:"feeCoin"`
-}
-
 type ApiSpotFill struct {
 	Symbol     string
 	Side       string
@@ -20,4 +15,16 @@ type ApiSpotFill struct {
 type ApiSpotGetFills struct {
 	ApiResponse
 	Data []*ApiSpotFill
+}
+
+func (f *ApiSpotGetFills) GetCode() string {
+	return f.ApiResponse.Code
+}
+
+func (f *ApiSpotGetFills) GetMessage() string {
+	return f.ApiResponse.Message
+}
+
+func (f *ApiSpotGetFills) GetList() []*ApiSpotFill {
+	return f.Data
 }

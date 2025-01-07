@@ -5,17 +5,30 @@ import (
 )
 
 type BitgetFetcher struct {
-	spotFetcher IFetcher
+	fetchers []IFetcher
 }
 
-func NewBitgetFetcher(sFetcher IFetcher) IFetcher {
+func NewBitgetFetcher(
+	fetchs []IFetcher,
+) IFetcher {
 	return &BitgetFetcher{
-		spotFetcher: sFetcher,
+		fetchers: fetchs,
 	}
 }
 
-func (f BitgetFetcher) FetchLastTrades() ([]trading.Trade, error) {
-	trades, err := f.spotFetcher.FetchLastTrades()
+func (f BitgetFetcher) FetchLastTrades() ([]*trading.Trade, error) {
+	trades := make([]*trading.Trade, 0)
 
-	return trades, err
+	// TODO use go routine for multi threading
+	for _, fetcher := range f.fetchers {
+		list, err := fetcher.FetchLastTrades()
+
+		if err != nil {
+			return nil, err
+		}
+
+		trades = append(trades, list...)
+	}
+
+	return trades, nil
 }

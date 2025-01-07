@@ -8,8 +8,8 @@ import (
 	bitgetModel "tradeFetcher/model/bitget"
 )
 
-func TestNewBitgetApiSignatureBuilder(t *testing.T) {
-	fakeObject := NewBitgetApiSignatureBuilder(nil, nil, nil)
+func TestNewApiSignatureBuilder(t *testing.T) {
+	fakeObject := NewApiSignatureBuilder(nil, nil, nil)
 
 	assert.NotNil(t, fakeObject)
 }
@@ -38,7 +38,7 @@ func TestSignMessage(t *testing.T) {
 		Times(1).
 		Return(expectedSignature)
 
-	builder := NewBitgetApiSignatureBuilder(accountCfg, crypterMock, encoderMock)
+	builder := NewApiSignatureBuilder(accountCfg, crypterMock, encoderMock)
 
 	signature := builder.Sign([]byte(message))
 

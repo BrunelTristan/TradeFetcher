@@ -23,12 +23,12 @@ func TestCallApiQuerySimpleGet(t *testing.T) {
 	crypter := security.NewSha256Crypter()
 	encoder := externalTools.NewBase64Encoder()
 
-	signBuilder := bitget.NewBitgetApiSignatureBuilder(
+	signBuilder := bitget.NewApiSignatureBuilder(
 		globalConfig.BitgetAccount,
 		crypter,
 		encoder)
 
-	api := bitget.NewBitgetApiQuery(
+	api := bitget.NewApiQuery(
 		globalConfig.BitgetAccount,
 		signBuilder)
 
@@ -49,12 +49,12 @@ func TestCallApiQueryGetWithSignature(t *testing.T) {
 	configLoader := configuration.NewConfigurationLoaderFromJsonFile[configModel.GlobalConfiguration]("/src/integrationTests/files/globalConfig.json")
 	globalConfig, _ := configLoader.Load()
 
-	signBuilder := bitget.NewBitgetApiSignatureBuilder(
+	signBuilder := bitget.NewApiSignatureBuilder(
 		globalConfig.BitgetAccount,
 		security.NewSha256Crypter(),
 		externalTools.NewBase64Encoder())
 
-	api := bitget.NewBitgetApiQuery(
+	api := bitget.NewApiQuery(
 		globalConfig.BitgetAccount,
 		signBuilder)
 
@@ -75,18 +75,18 @@ func TestCallApiQueryGetSpotFills(t *testing.T) {
 	configLoader := configuration.NewConfigurationLoaderFromJsonFile[configModel.GlobalConfiguration]("/src/integrationTests/files/globalConfig.json")
 	globalConfig, _ := configLoader.Load()
 
-	signBuilder := bitget.NewBitgetApiSignatureBuilder(
+	signBuilder := bitget.NewApiSignatureBuilder(
 		globalConfig.BitgetAccount,
 		security.NewSha256Crypter(),
 		externalTools.NewBase64Encoder())
 
-	api := bitget.NewBitgetApiQuery(
+	api := bitget.NewApiQuery(
 		globalConfig.BitgetAccount,
 		signBuilder)
 
 	routeBuilder := externalTools.NewApiRouteBuilder()
 
-	spotFillGetter := bitget.NewBitgetSpotFillsGetter(api, routeBuilder)
+	spotFillGetter := bitget.NewSpotFillsGetter(api, routeBuilder)
 
 	parameters := &bitgetModel.SpotGetFillQueryParameters{
 		Symbol: "BTCUSDT",

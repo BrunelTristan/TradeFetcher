@@ -15,7 +15,7 @@ func NewSortByDateFetcherDecorator(decorateeFetcher IFetcher) IFetcher {
 	}
 }
 
-func (f SortByDateFetcherDecorator) FetchLastTrades() ([]trading.Trade, error) {
+func (f SortByDateFetcherDecorator) FetchLastTrades() ([]*trading.Trade, error) {
 	trades, err := f.decoratee.FetchLastTrades()
 
 	sort.SliceStable(trades, func(i, j int) bool {

@@ -28,7 +28,7 @@ func TestProcessTradesOnEmptySlice(t *testing.T) {
 
 	assert.NotNil(t, displayer)
 
-	trades := []trading.Trade{}
+	trades := []*trading.Trade{}
 
 	displayer.ProcessTrades(trades)
 }
@@ -48,9 +48,9 @@ func TestProcessTradesWithValues(t *testing.T) {
 
 	assert.NotNil(t, displayer)
 
-	trades := []trading.Trade{
-		trading.Trade{},
-		trading.Trade{},
+	trades := []*trading.Trade{
+		&trading.Trade{},
+		&trading.Trade{},
 	}
 
 	displayer.ProcessTrades(trades)

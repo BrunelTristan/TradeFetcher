@@ -21,3 +21,15 @@ type ApiFutureTransactions struct {
 	ApiResponse
 	Data *ApiFutureTransactionsList
 }
+
+func (t *ApiFutureTransactions) GetCode() string {
+	return t.ApiResponse.Code
+}
+
+func (t *ApiFutureTransactions) GetMessage() string {
+	return t.ApiResponse.Message
+}
+
+func (t *ApiFutureTransactions) GetList() []*ApiFutureTransaction {
+	return t.Data.FillList
+}

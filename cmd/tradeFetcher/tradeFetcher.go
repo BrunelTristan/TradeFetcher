@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	major = 1
-	minor = 2
+	major = 2
+	minor = 0
 	patch = 0
 )
 

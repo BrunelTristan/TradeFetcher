@@ -31,18 +31,19 @@ func (f BitgetSpotFetcher) FetchLastTrades() ([]trading.Trade, error) {
 		return nil, err
 	}
 
-	apiResponse := getResponse.(*bitgetModel.ApiSpotGetFills)
-	code, err := strconv.Atoi(apiResponse.Code)
+	apiResponse := getResponse.(bitgetModel.IApiResponse[bitgetModel.ApiSpotFill])
+	code, err := strconv.Atoi(apiResponse.GetCode())
 	if err != nil || code != 0 {
 		return nil, &customError.BitgetError{
 			Code:    code,
-			Message: apiResponse.Message,
+			Message: apiResponse.GetMessage(),
 		}
 	}
 
-	trades := make([]trading.Trade, len(apiResponse.Data))
+	tradeList := apiResponse.GetList()
+	trades := make([]trading.Trade, len(tradeList))
 
-	for index, trade := range apiResponse.Data {
+	for index, trade := range tradeList {
 		convertedTrade, err := f.tradeConverter.Convert(trade)
 		if err != nil {
 			return nil, &customError.BitgetError{

@@ -56,6 +56,10 @@ func (c *CompositionRoot) Build() {
 		c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
 		c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
 	)
+	c.singletons["IQuery[bitgetModel.FutureTransactionsQueryParameters]"] = bitget.NewBitgetFutureTransactionsGetter(
+		c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
+		c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
+	)
 }
 
 func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
@@ -64,12 +68,12 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 	}
 
 	bitgetFetcherList := []fetcher.IFetcher{
-		bitget.NewBitgetFutureFetcher(
-			bitget.NewBitgetFutureTransactionsGetter(
-				c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
-				c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
+		bitget.NewTradesFetcher[bitgetModel.FutureTransactionsQueryParameters, bitgetModel.ApiFutureTransaction](
+			bitget.NewApiQueryToStructDecorator[bitgetModel.FutureTransactionsQueryParameters, bitgetModel.ApiFutureTransactions](
+				c.singletons["IQuery[bitgetModel.FutureTransactionsQueryParameters]"].(common.IQuery[bitgetModel.FutureTransactionsQueryParameters]),
+				common.NewNilQueryParametersBuilder[bitgetModel.FutureTransactionsQueryParameters](),
+				c.singletons["IJsonConverter[bitgetModel.ApiFutureTransactions]"].(json.IJsonConverter[bitgetModel.ApiFutureTransactions]),
 			),
-			c.singletons["IJsonConverter[bitgetModel.ApiFutureTransactions]"].(json.IJsonConverter[bitgetModel.ApiFutureTransactions]),
 			c.singletons["IStructConverter[bitgetModel.ApiFutureTransaction,trading.Trade]"].(converter.IStructConverter[bitgetModel.ApiFutureTransaction, trading.Trade]),
 		),
 	}
@@ -77,7 +81,7 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 	for _, asset := range c.globalConfig.BitgetSpotAssets {
 		bitgetFetcherList = append(
 			bitgetFetcherList,
-			bitget.NewBitgetSpotFetcher(
+			bitget.NewTradesFetcher[bitgetModel.SpotGetFillQueryParameters, bitgetModel.ApiSpotFill](
 				bitget.NewApiQueryToStructDecorator[bitgetModel.SpotGetFillQueryParameters, bitgetModel.ApiSpotGetFills](
 					c.singletons["IQuery[bitgetModel.SpotGetFillQueryParameters]"].(common.IQuery[bitgetModel.SpotGetFillQueryParameters]),
 					bitget.NewSpotGetFillQueryParametersBuilder(asset),

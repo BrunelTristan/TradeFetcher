@@ -4,7 +4,6 @@ import (
 	"tradeFetcher/internal/common"
 	"tradeFetcher/internal/externalTools"
 	bitgetModel "tradeFetcher/model/bitget"
-	customError "tradeFetcher/model/error"
 )
 
 type BitgetFutureTransactionsGetter struct {
@@ -23,10 +22,6 @@ func NewBitgetFutureTransactionsGetter(
 }
 
 func (g *BitgetFutureTransactionsGetter) Get(parameters *bitgetModel.FutureTransactionsQueryParameters) (interface{}, error) {
-	if parameters == nil {
-		return nil, &customError.RestApiError{HttpCode: 999}
-	}
-
 	route := g.routeBuilder.BuildRoute(
 		[]string{bitgetModel.FUTURE_ROOT_ROUTE, bitgetModel.FUTURE_GET_TRANSACTION_SUB_ROUTE},
 		map[string]string{"productType": "USDT-FUTURES"},

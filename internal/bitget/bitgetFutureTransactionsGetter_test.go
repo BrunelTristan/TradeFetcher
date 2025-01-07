@@ -16,33 +16,6 @@ func TestNewBitgetFutureTransactionsGetter(t *testing.T) {
 	assert.NotNil(t, fakeObject)
 }
 
-func TestGetFutureTransactionsWithNilParameters(t *testing.T) {
-	mockController := gomock.NewController(t)
-
-	apiGetterMock := generatedMocks.NewMockIQuery[bitgetModel.ApiQueryParameters](mockController)
-	routeBuilderMock := generatedMocks.NewMockIApiRouteBuilder(mockController)
-
-	apiGetterMock.
-		EXPECT().
-		Get(gomock.Any()).
-		Times(0)
-
-	routeBuilderMock.
-		EXPECT().
-		BuildRoute(gomock.Any(), gomock.Any()).
-		Times(0)
-
-	fakeObject := NewBitgetFutureTransactionsGetter(apiGetterMock, routeBuilderMock)
-
-	output, err := fakeObject.Get(nil)
-
-	assert.Nil(t, output)
-	assert.NotNil(t, err)
-
-	assert.True(t, errors.As(err, new(*error.RestApiError)))
-	assert.Equal(t, 999, err.(*error.RestApiError).HttpCode)
-}
-
 func TestGetFutureTransactionsWithBitgetError(t *testing.T) {
 	parameters := &bitgetModel.FutureTransactionsQueryParameters{}
 	expectedRoute := []string{"/api/v2/mix", "/order/fill-history"}

@@ -95,7 +95,7 @@ func TestBitgetSpotFetcherFetchLastTradesWithTradeConversionError(t *testing.T) 
 		Get(gomock.Nil()).
 		Times(1).
 		Return(apiResponse, nil)
-		
+
 	tradeConverterMock.
 		EXPECT().
 		Convert(gomock.Eq(apiSubObject)).

@@ -12,22 +12,22 @@ import (
 	customError "tradeFetcher/model/error"
 )
 
-type BitgetApiQuery struct {
+type ApiQuery struct {
 	accountConfiguration *bitgetModel.AccountConfiguration
 	signatureBuilder     externalTools.ISignatureBuilder
 }
 
-func NewBitgetApiQuery(
+func NewApiQuery(
 	accountCfg *bitgetModel.AccountConfiguration,
 	signBuilder externalTools.ISignatureBuilder,
 ) common.IQuery[bitgetModel.ApiQueryParameters] {
-	return &BitgetApiQuery{
+	return &ApiQuery{
 		accountConfiguration: accountCfg,
 		signatureBuilder:     signBuilder,
 	}
 }
 
-func (c *BitgetApiQuery) Get(parameters *bitgetModel.ApiQueryParameters) (interface{}, error) {
+func (c *ApiQuery) Get(parameters *bitgetModel.ApiQueryParameters) (interface{}, error) {
 	if parameters == nil {
 		return nil, &customError.RestApiError{HttpCode: 999}
 	}

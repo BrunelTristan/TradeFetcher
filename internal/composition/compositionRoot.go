@@ -44,19 +44,19 @@ func (c *CompositionRoot) Build() {
 	c.singletons["IStructConverter[bitgetModel.ApiSpotGetFills,trading.Trade]"] = bitget.NewSpotFillToTradeConverter()
 	c.singletons["IStructConverter[bitgetModel.ApiFutureTransaction,trading.Trade]"] = bitget.NewFutureTransactionToTradeConverter()
 
-	c.singletons["IQuery[bitgetModel.ApiQueryParameters]"] = bitget.NewBitgetApiQuery(
+	c.singletons["IQuery[bitgetModel.ApiQueryParameters]"] = bitget.NewApiQuery(
 		c.globalConfig.BitgetAccount,
-		bitget.NewBitgetApiSignatureBuilder(
+		bitget.NewApiSignatureBuilder(
 			c.globalConfig.BitgetAccount,
 			security.NewSha256Crypter(),
 			externalTools.NewBase64Encoder()),
 	)
 
-	c.singletons["IQuery[bitgetModel.SpotGetFillQueryParameters]"] = bitget.NewBitgetSpotFillsGetter(
+	c.singletons["IQuery[bitgetModel.SpotGetFillQueryParameters]"] = bitget.NewSpotFillsGetter(
 		c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
 		c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
 	)
-	c.singletons["IQuery[bitgetModel.FutureTransactionsQueryParameters]"] = bitget.NewBitgetFutureTransactionsGetter(
+	c.singletons["IQuery[bitgetModel.FutureTransactionsQueryParameters]"] = bitget.NewFutureTransactionsGetter(
 		c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
 		c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
 	)

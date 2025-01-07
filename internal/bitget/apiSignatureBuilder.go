@@ -5,24 +5,24 @@ import (
 	bitgetModel "tradeFetcher/model/bitget"
 )
 
-type BitgetApiSignatureBuilder struct {
+type ApiSignatureBuilder struct {
 	accountConfiguration *bitgetModel.AccountConfiguration
 	crypter              externalTools.ICrypter
 	encoder              externalTools.IEncoder
 }
 
-func NewBitgetApiSignatureBuilder(
+func NewApiSignatureBuilder(
 	accountCfg *bitgetModel.AccountConfiguration,
 	crypt externalTools.ICrypter,
 	encode externalTools.IEncoder,
 ) externalTools.ISignatureBuilder {
-	return &BitgetApiSignatureBuilder{
+	return &ApiSignatureBuilder{
 		accountConfiguration: accountCfg,
 		crypter:              crypt,
 		encoder:              encode,
 	}
 }
 
-func (sb *BitgetApiSignatureBuilder) Sign(message []byte) []byte {
+func (sb *ApiSignatureBuilder) Sign(message []byte) []byte {
 	return sb.encoder.Encode(sb.crypter.Crypt(string(message), sb.accountConfiguration.SecretKey))
 }

@@ -6,22 +6,22 @@ import (
 	bitgetModel "tradeFetcher/model/bitget"
 )
 
-type BitgetFutureTransactionsGetter struct {
+type FutureTransactionsGetter struct {
 	apiQuery     common.IQuery[bitgetModel.ApiQueryParameters]
 	routeBuilder externalTools.IApiRouteBuilder
 }
 
-func NewBitgetFutureTransactionsGetter(
+func NewFutureTransactionsGetter(
 	aQuery common.IQuery[bitgetModel.ApiQueryParameters],
 	rBuilder externalTools.IApiRouteBuilder,
 ) common.IQuery[bitgetModel.FutureTransactionsQueryParameters] {
-	return &BitgetFutureTransactionsGetter{
+	return &FutureTransactionsGetter{
 		apiQuery:     aQuery,
 		routeBuilder: rBuilder,
 	}
 }
 
-func (g *BitgetFutureTransactionsGetter) Get(parameters *bitgetModel.FutureTransactionsQueryParameters) (interface{}, error) {
+func (g *FutureTransactionsGetter) Get(parameters *bitgetModel.FutureTransactionsQueryParameters) (interface{}, error) {
 	route := g.routeBuilder.BuildRoute(
 		[]string{bitgetModel.FUTURE_ROOT_ROUTE, bitgetModel.FUTURE_GET_TRANSACTION_SUB_ROUTE},
 		map[string]string{"productType": "USDT-FUTURES"},

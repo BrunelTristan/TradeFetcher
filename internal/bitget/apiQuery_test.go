@@ -13,14 +13,14 @@ import (
 	"tradeFetcher/model/error"
 )
 
-func TestNewBitgetApiQuery(t *testing.T) {
-	fakeObject := NewBitgetApiQuery(nil, nil)
+func TestNewApiQuery(t *testing.T) {
+	fakeObject := NewApiQuery(nil, nil)
 
 	assert.NotNil(t, fakeObject)
 }
 
 func TestCallApiQueryWithNilParameters(t *testing.T) {
-	api := NewBitgetApiQuery(nil, nil)
+	api := NewApiQuery(nil, nil)
 
 	output, err := api.Get(nil)
 
@@ -32,7 +32,7 @@ func TestCallApiQueryWithNilParameters(t *testing.T) {
 }
 
 func TestCallApiQueryWithUnsupportedChars(t *testing.T) {
-	api := NewBitgetApiQuery(nil, nil)
+	api := NewApiQuery(nil, nil)
 	parameters := &bitgetModel.ApiQueryParameters{
 		Route: "@^\\``||[{#~/public/time",
 	}
@@ -60,7 +60,7 @@ func TestCallApiQueryWithUnkwownRoute(t *testing.T) {
 		SecretKey:  "secret",
 	}
 
-	api := NewBitgetApiQuery(accountCfg, signatureBuilderMock)
+	api := NewApiQuery(accountCfg, signatureBuilderMock)
 	parameters := &bitgetModel.ApiQueryParameters{
 		Route: ".apis/vXXXX/public/time",
 	}
@@ -92,7 +92,7 @@ func TestCallApiQueryWithoutErrorWithoutQueryStringWithoutBody(t *testing.T) {
 		Sign(gomock.Eq([]byte(strconv.FormatInt(int64(time.Now().UnixNano()/1000000), 10) + "GET/api/v2/public/time"))).
 		Times(1)
 
-	api := NewBitgetApiQuery(accountCfg, signatureBuilderMock)
+	api := NewApiQuery(accountCfg, signatureBuilderMock)
 
 	output, err := api.Get(parameters)
 
@@ -121,7 +121,7 @@ func TestCallApiQueryWithoutErrorWithQueryStringWithoutBody(t *testing.T) {
 		Sign(gomock.Eq([]byte(strconv.FormatInt(int64(time.Now().UnixNano()/1000000), 10) + "GET/api/v2/public/time?param1=yesterday"))).
 		Times(1)
 
-	api := NewBitgetApiQuery(accountCfg, signatureBuilderMock)
+	api := NewApiQuery(accountCfg, signatureBuilderMock)
 
 	output, err := api.Get(parameters)
 

@@ -7,22 +7,22 @@ import (
 	customError "tradeFetcher/model/error"
 )
 
-type BitgetSpotFillsGetter struct {
+type SpotFillsGetter struct {
 	apiQuery     common.IQuery[bitgetModel.ApiQueryParameters]
 	routeBuilder externalTools.IApiRouteBuilder
 }
 
-func NewBitgetSpotFillsGetter(
+func NewSpotFillsGetter(
 	aQuery common.IQuery[bitgetModel.ApiQueryParameters],
 	rBuilder externalTools.IApiRouteBuilder,
 ) common.IQuery[bitgetModel.SpotGetFillQueryParameters] {
-	return &BitgetSpotFillsGetter{
+	return &SpotFillsGetter{
 		apiQuery:     aQuery,
 		routeBuilder: rBuilder,
 	}
 }
 
-func (g *BitgetSpotFillsGetter) Get(parameters *bitgetModel.SpotGetFillQueryParameters) (interface{}, error) {
+func (g *SpotFillsGetter) Get(parameters *bitgetModel.SpotGetFillQueryParameters) (interface{}, error) {
 	if parameters == nil {
 		return nil, &customError.RestApiError{HttpCode: 999}
 	}

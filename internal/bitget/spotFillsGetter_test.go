@@ -10,18 +10,45 @@ import (
 	"tradeFetcher/model/error"
 )
 
-func TestNewBitgetFutureTransactionsGetter(t *testing.T) {
-	fakeObject := NewBitgetFutureTransactionsGetter(nil, nil)
+func TestNewSpotFillsGetter(t *testing.T) {
+	fakeObject := NewSpotFillsGetter(nil, nil)
 
 	assert.NotNil(t, fakeObject)
 }
 
-func TestGetFutureTransactionsWithBitgetError(t *testing.T) {
-	parameters := &bitgetModel.FutureTransactionsQueryParameters{}
-	expectedRoute := []string{"/api/v2/mix", "/order/fill-history"}
-	expectedRouteParams := map[string]string{"productType": "USDT-FUTURES"}
+func TestGetSpotFillsWithNilParameters(t *testing.T) {
+	mockController := gomock.NewController(t)
+
+	apiGetterMock := generatedMocks.NewMockIQuery[bitgetModel.ApiQueryParameters](mockController)
+	routeBuilderMock := generatedMocks.NewMockIApiRouteBuilder(mockController)
+
+	apiGetterMock.
+		EXPECT().
+		Get(gomock.Any()).
+		Times(0)
+
+	routeBuilderMock.
+		EXPECT().
+		BuildRoute(gomock.Any(), gomock.Any()).
+		Times(0)
+
+	fakeObject := NewSpotFillsGetter(apiGetterMock, routeBuilderMock)
+
+	output, err := fakeObject.Get(nil)
+
+	assert.Nil(t, output)
+	assert.NotNil(t, err)
+
+	assert.True(t, errors.As(err, new(*error.RestApiError)))
+	assert.Equal(t, 999, err.(*error.RestApiError).HttpCode)
+}
+
+func TestGetSpotFillsWithBitgetError(t *testing.T) {
+	parameters := &bitgetModel.SpotGetFillQueryParameters{Symbol: "ETHUSDT"}
+	expectedRoute := []string{"/api/v2/spot", "/trade/fills"}
+	expectedRouteParams := map[string]string{"symbol": "ETHUSDT"}
 	expectedApiParameters := &bitgetModel.ApiQueryParameters{
-		Route: "/api/v2/mix/order/fill-history?productType=USDT-FUTURES",
+		Route: "/api/v2/spot/trade/fills?symbol=ETHUSDT",
 	}
 	mockController := gomock.NewController(t)
 
@@ -40,7 +67,7 @@ func TestGetFutureTransactionsWithBitgetError(t *testing.T) {
 		Times(1).
 		Return(expectedApiParameters.Route)
 
-	fakeObject := NewBitgetFutureTransactionsGetter(apiGetterMock, routeBuilderMock)
+	fakeObject := NewSpotFillsGetter(apiGetterMock, routeBuilderMock)
 
 	output, err := fakeObject.Get(parameters)
 
@@ -51,12 +78,12 @@ func TestGetFutureTransactionsWithBitgetError(t *testing.T) {
 	assert.Equal(t, 501, err.(*error.RestApiError).HttpCode)
 }
 
-func TestGetFutureTransactionsWithoutError(t *testing.T) {
-	parameters := &bitgetModel.FutureTransactionsQueryParameters{}
-	expectedRoute := []string{"/api/v2/mix", "/order/fill-history"}
-	expectedRouteParams := map[string]string{"productType": "USDT-FUTURES"}
+func TestGetSpotFillsWithoutError(t *testing.T) {
+	parameters := &bitgetModel.SpotGetFillQueryParameters{Symbol: "ETHUSDT"}
+	expectedRoute := []string{"/api/v2/spot", "/trade/fills"}
+	expectedRouteParams := map[string]string{"symbol": "ETHUSDT"}
 	expectedApiParameters := &bitgetModel.ApiQueryParameters{
-		Route: "/api/v2/mix/order/fill-history?productType=USDT-FUTURES",
+		Route: "/api/v2/spot/trade/fills?symbol=ETHUSDT",
 	}
 	mockController := gomock.NewController(t)
 
@@ -75,7 +102,7 @@ func TestGetFutureTransactionsWithoutError(t *testing.T) {
 		Times(1).
 		Return(expectedApiParameters.Route)
 
-	fakeObject := NewBitgetFutureTransactionsGetter(apiGetterMock, routeBuilderMock)
+	fakeObject := NewSpotFillsGetter(apiGetterMock, routeBuilderMock)
 
 	output, err := fakeObject.Get(parameters)
 

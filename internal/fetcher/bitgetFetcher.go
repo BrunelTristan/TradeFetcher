@@ -16,8 +16,8 @@ func NewBitgetFetcher(
 	}
 }
 
-func (f BitgetFetcher) FetchLastTrades() ([]trading.Trade, error) {
-	trades := make([]trading.Trade, 0)
+func (f BitgetFetcher) FetchLastTrades() ([]*trading.Trade, error) {
+	trades := make([]*trading.Trade, 0)
 
 	// TODO use go routine for multi threading
 	for _, fetcher := range f.fetchers {

@@ -25,7 +25,7 @@ func NewTradesFetcher[P any, O any](
 	}
 }
 
-func (f TradesFetcher[P, O]) FetchLastTrades() ([]trading.Trade, error) {
+func (f TradesFetcher[P, O]) FetchLastTrades() ([]*trading.Trade, error) {
 	getResponse, err := f.tradeGetter.Get(nil)
 	if err != nil {
 		return nil, err
@@ -41,7 +41,7 @@ func (f TradesFetcher[P, O]) FetchLastTrades() ([]trading.Trade, error) {
 	}
 
 	tradeList := apiResponse.GetList()
-	trades := make([]trading.Trade, len(tradeList))
+	trades := make([]*trading.Trade, len(tradeList))
 
 	for index, trade := range tradeList {
 		convertedTrade, err := f.tradeConverter.Convert(trade)
@@ -51,8 +51,7 @@ func (f TradesFetcher[P, O]) FetchLastTrades() ([]trading.Trade, error) {
 				Message: err.Error(),
 			}
 		}
-		// TODO use pointer instead of raw data to avoid copy in every layers
-		trades[index] = *convertedTrade
+		trades[index] = convertedTrade
 	}
 
 	return trades, nil

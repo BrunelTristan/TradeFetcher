@@ -189,6 +189,6 @@ func TestTradesFetcherFetchLastTradesWithoutError(t *testing.T) {
 	assert.Len(t, trades, 3)
 
 	for index, trade := range trades {
-		assert.Equal(t, *convertedTrades[index], trade)
+		assert.Equal(t, convertedTrades[index], trade)
 	}
 }

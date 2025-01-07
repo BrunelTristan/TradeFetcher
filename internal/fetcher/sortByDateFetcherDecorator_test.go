@@ -39,13 +39,20 @@ func TestSortByDateFetcherDecoratorFetchLastTradesFromDecoratee(t *testing.T) {
 
 	fetcherMock := generatedMocks.NewMockIFetcher(mockController)
 
-	tradesCount := 51
+	tradesCount := 5
+	fetchedTrades := []*trading.Trade{
+		&trading.Trade{ExecutedTimestamp: 456},
+		&trading.Trade{ExecutedTimestamp: 789},
+		&trading.Trade{ExecutedTimestamp: 123},
+		&trading.Trade{ExecutedTimestamp: 852},
+		&trading.Trade{ExecutedTimestamp: 369},
+	}
 
 	fetcherMock.
 		EXPECT().
 		FetchLastTrades().
 		Times(1).
-		Return(make([]trading.Trade, tradesCount), nil)
+		Return(fetchedTrades, nil)
 
 	fakeObject := NewSortByDateFetcherDecorator(fetcherMock)
 
@@ -67,10 +74,10 @@ func TestSortByDateFetcherDecoratorFetchLastTradesSortByDate(t *testing.T) {
 		EXPECT().
 		FetchLastTrades().
 		Times(1).
-		Return([]trading.Trade{
-			trading.Trade{ExecutedTimestamp: 456},
-			trading.Trade{ExecutedTimestamp: 789},
-			trading.Trade{ExecutedTimestamp: 123},
+		Return([]*trading.Trade{
+			&trading.Trade{ExecutedTimestamp: 456},
+			&trading.Trade{ExecutedTimestamp: 789},
+			&trading.Trade{ExecutedTimestamp: 123},
 		}, nil)
 
 	fakeObject := NewSortByDateFetcherDecorator(fetcherMock)

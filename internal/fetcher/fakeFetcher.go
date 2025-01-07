@@ -15,17 +15,19 @@ func NewFakeFetcher() IFetcher {
 	return &FakeFetcher{}
 }
 
-func (f FakeFetcher) FetchLastTrades() ([]trading.Trade, error) {
+func (f FakeFetcher) FetchLastTrades() ([]*trading.Trade, error) {
 	tradeCount := MIN_TRADES_COUNT + rand.IntN(MAX_TRADES_COUNT-MIN_TRADES_COUNT)
 
-	trades := make([]trading.Trade, tradeCount)
+	trades := make([]*trading.Trade, tradeCount)
 
 	for index := 0; index < tradeCount; index++ {
-		trades[index].Pair = "FakePair"
-		trades[index].Price = rand.Float64()
-		trades[index].Quantity = rand.Float64()
-		trades[index].Fees = rand.Float64()
-		trades[index].ExecutedTimestamp = rand.Int64()
+		trades[index] = &trading.Trade{
+			Pair:              "FakePair",
+			Price:             rand.Float64(),
+			Quantity:          rand.Float64(),
+			Fees:              rand.Float64(),
+			ExecutedTimestamp: rand.Int64(),
+		}
 	}
 
 	return trades, nil

@@ -52,7 +52,7 @@ func TestBitgetFetcherFetchLastTradesWithErrorOnFutureFetcher(t *testing.T) {
 		EXPECT().
 		FetchLastTrades().
 		Times(1).
-		Return(make([]trading.Trade, 2), nil)
+		Return(make([]*trading.Trade, 2), nil)
 	futureFetcherMock.
 		EXPECT().
 		FetchLastTrades().
@@ -79,12 +79,12 @@ func TestBitgetFetcherFetchLastTrades(t *testing.T) {
 		EXPECT().
 		FetchLastTrades().
 		Times(2).
-		Return(make([]trading.Trade, 7), nil)
+		Return(make([]*trading.Trade, 7), nil)
 	futureFetcherMock.
 		EXPECT().
 		FetchLastTrades().
 		Times(3).
-		Return(make([]trading.Trade, 5), nil)
+		Return(make([]*trading.Trade, 5), nil)
 
 	fakeObject := NewBitgetFetcher([]IFetcher{futureFetcherMock, spotFetcherMock, futureFetcherMock, futureFetcherMock, spotFetcherMock})
 

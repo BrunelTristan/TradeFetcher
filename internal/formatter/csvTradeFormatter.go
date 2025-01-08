@@ -16,12 +16,15 @@ func (t CsvTradeFormatter) Format(trade *trading.Trade) string {
 	openClose := "C"
 	longShort := "S"
 
-	if trade.Open {
-		openClose = "O"
-	}
-
 	if trade.Long {
 		longShort = "L"
+	}
+
+	if trade.TransactionType == trading.OPENING {
+		openClose = "O"
+	} else if trade.TransactionType == trading.FUNDING {
+		openClose = "F"
+		longShort = ""
 	}
 
 	return fmt.Sprintf(

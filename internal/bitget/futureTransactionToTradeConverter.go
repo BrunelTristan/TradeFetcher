@@ -22,7 +22,7 @@ func (c *FutureTransactionToTradeConverter) Convert(parameters *bitgetModel.ApiF
 		return nil, nil
 	}
 
-	trade := &trading.Trade{Pair: parameters.Symbol, Long: true}
+	trade := &trading.Trade{Pair: parameters.Symbol}
 
 	floatVal, err := strconv.ParseFloat(parameters.Price, 64)
 	if err != nil {
@@ -77,13 +77,21 @@ func (c *FutureTransactionToTradeConverter) Convert(parameters *bitgetModel.ApiF
 	}
 
 	if strings.Contains(parameters.TradeSide, bitgetModel.OPEN_KEYWORD) {
-		trade.Open = true
+		trade.TransactionType = trading.OPENING
 	} else if strings.Contains(parameters.TradeSide, bitgetModel.CLOSE_KEYWORD) {
-		trade.Open = false
+		trade.TransactionType = trading.CLOSE
 	} else if strings.Contains(parameters.TradeSide, bitgetModel.BUY_KEYWORD) {
-		trade.Open = trade.Long
+		if trade.Long {
+			trade.TransactionType = trading.OPENING
+		} else {
+			trade.TransactionType = trading.CLOSE
+		}
 	} else if strings.Contains(parameters.TradeSide, bitgetModel.SELL_KEYWORD) {
-		trade.Open = !trade.Long
+		if !trade.Long {
+			trade.TransactionType = trading.OPENING
+		} else {
+			trade.TransactionType = trading.CLOSE
+		}
 	} else {
 		return nil, c.buildConvertionError(
 			"TradeSide",

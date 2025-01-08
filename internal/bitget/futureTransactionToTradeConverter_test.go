@@ -6,6 +6,7 @@ import (
 	"testing"
 	bitgetModel "tradeFetcher/model/bitget"
 	"tradeFetcher/model/error"
+	"tradeFetcher/model/trading"
 )
 
 func TestNewFutureTransactionToTradeConverter(t *testing.T) {
@@ -173,7 +174,7 @@ func TestFutureTransactionsToTradeConverterBuyOrder(t *testing.T) {
 	assert.Equal(t, 1234.785, output.Quantity)
 	assert.Equal(t, 0.0012, output.Fees)
 	assert.Equal(t, int64(16549876), output.ExecutedTimestamp)
-	assert.True(t, output.Open)
+	assert.Equal(t, trading.OPENING, output.TransactionType)
 	assert.True(t, output.Long)
 }
 
@@ -204,7 +205,7 @@ func TestFutureTransactionsToTradeConverterSellOrder(t *testing.T) {
 	assert.Equal(t, 47.348, output.Quantity)
 	assert.Equal(t, 0.000489, output.Fees)
 	assert.Equal(t, int64(4565987), output.ExecutedTimestamp)
-	assert.True(t, output.Open)
+	assert.Equal(t, trading.OPENING, output.TransactionType)
 	assert.False(t, output.Long)
 }
 
@@ -230,7 +231,7 @@ func TestFutureTransactionsToTradeConverterOpenTradeSide(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, output)
 
-	assert.True(t, output.Open)
+	assert.Equal(t, trading.OPENING, output.TransactionType)
 	assert.True(t, output.Long)
 }
 
@@ -256,7 +257,7 @@ func TestFutureTransactionsToTradeConverterCloseTradeSide(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, output)
 
-	assert.False(t, output.Open)
+	assert.Equal(t, trading.CLOSE, output.TransactionType)
 	assert.True(t, output.Long)
 }
 
@@ -282,7 +283,7 @@ func TestFutureTransactionsToTradeConverterNearlyOpenTradeSide(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, output)
 
-	assert.True(t, output.Open)
+	assert.Equal(t, trading.OPENING, output.TransactionType)
 	assert.True(t, output.Long)
 }
 
@@ -308,7 +309,7 @@ func TestFutureTransactionsToTradeConverterNearlyCloseTradeSide(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, output)
 
-	assert.False(t, output.Open)
+	assert.Equal(t, trading.CLOSE, output.TransactionType)
 	assert.True(t, output.Long)
 }
 
@@ -334,7 +335,7 @@ func TestFutureTransactionsToTradeConverterBuyShortOrder(t *testing.T) {
 	assert.Nil(t, err)
 	assert.NotNil(t, output)
 
-	assert.False(t, output.Open)
+	assert.Equal(t, trading.CLOSE, output.TransactionType)
 	assert.False(t, output.Long)
 }
 
@@ -365,6 +366,6 @@ func TestFutureTransactionsToTradeConverterSellLongOrder(t *testing.T) {
 	assert.Equal(t, 1234.785, output.Quantity)
 	assert.Equal(t, 0.0012, output.Fees)
 	assert.Equal(t, int64(16549876), output.ExecutedTimestamp)
-	assert.False(t, output.Open)
+	assert.Equal(t, trading.CLOSE, output.TransactionType)
 	assert.True(t, output.Long)
 }

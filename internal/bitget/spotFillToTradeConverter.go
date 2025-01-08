@@ -64,9 +64,9 @@ func (c *SpotFillToTradeConverter) Convert(parameters *bitgetModel.ApiSpotFill) 
 	trade.ExecutedTimestamp = intVal / 1000
 
 	if parameters.Side == bitgetModel.BUY_KEYWORD {
-		trade.Open = true
+		trade.TransactionType = trading.OPENING
 	} else if parameters.Side == bitgetModel.SELL_KEYWORD {
-		trade.Open = false
+		trade.TransactionType = trading.CLOSE
 	} else {
 		return nil, c.buildConvertionError(
 			"Side",

@@ -6,6 +6,7 @@ import (
 	"testing"
 	bitgetModel "tradeFetcher/model/bitget"
 	"tradeFetcher/model/error"
+	"tradeFetcher/model/trading"
 )
 
 func TestNewSpotFillToTradeConverter(t *testing.T) {
@@ -141,7 +142,7 @@ func TestSpotFillToTradeConverterBuyOrder(t *testing.T) {
 	assert.Equal(t, 1234.785, output.Quantity)
 	assert.Equal(t, 0.0012, output.Fees)
 	assert.Equal(t, int64(16549876), output.ExecutedTimestamp)
-	assert.True(t, output.Open)
+	assert.Equal(t, trading.OPENING, output.TransactionType)
 	assert.True(t, output.Long)
 }
 
@@ -169,6 +170,6 @@ func TestSpotFillToTradeConverterSellOrder(t *testing.T) {
 	assert.Equal(t, 47.348, output.Quantity)
 	assert.Equal(t, 0.000489, output.Fees)
 	assert.Equal(t, int64(4565987), output.ExecutedTimestamp)
-	assert.False(t, output.Open)
+	assert.Equal(t, trading.CLOSE, output.TransactionType)
 	assert.True(t, output.Long)
 }

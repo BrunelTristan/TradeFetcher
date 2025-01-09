@@ -24,13 +24,32 @@ func TestFutureTaxTransactionsToTradeConverterWithNilInput(t *testing.T) {
 	assert.Nil(t, output)
 }
 
+func TestFutureTaxTransactionsToTradeConverterWithoutFunding(t *testing.T) {
+	converter := NewFutureTaxTransactionToTradeConverter()
+
+	input := &bitgetModel.ApiFutureTaxTransaction{
+		Symbol:    "LINKBTC",
+		Timestamp: "16549876877",
+		Amount:    "-0.0012",
+		Fee:       "0",
+		TaxType:   "open_short",
+	}
+
+	output, err := converter.Convert(input)
+
+	assert.Nil(t, err)
+	assert.Nil(t, output)
+}
+
 func TestFutureTaxTransactionsToTradeConverterWithExecTimeError(t *testing.T) {
 	converter := NewFutureTaxTransactionToTradeConverter()
 
 	input := &bitgetModel.ApiFutureTaxTransaction{
 		Symbol:    "BTCUSDC",
 		Timestamp: "abcsde",
-		Fee:       "0.00254",
+		Amount:    "-0.00459712",
+		Fee:       "0",
+		TaxType:   "contract_main_settle_fee",
 	}
 
 	output, err := converter.Convert(input)
@@ -39,13 +58,15 @@ func TestFutureTaxTransactionsToTradeConverterWithExecTimeError(t *testing.T) {
 	assert.Nil(t, output)
 }
 
-func TestFutureTaxTransactionsToTradeConverterWithFeesFloatingError(t *testing.T) {
+func TestFutureTaxTransactionsToTradeConverterWithAmountTaxFloatingError(t *testing.T) {
 	converter := NewFutureTaxTransactionToTradeConverter()
 
 	input := &bitgetModel.ApiFutureTaxTransaction{
 		Symbol:    "BTCUSDC",
 		Timestamp: "123456",
-		Fee:       "hundred",
+		Amount:    "number",
+		Fee:       "0.000456",
+		TaxType:   "contract_main_settle_fee",
 	}
 
 	output, err := converter.Convert(input)
@@ -60,7 +81,9 @@ func TestFutureTaxTransactionsToTradeConverterWithoutError(t *testing.T) {
 	input := &bitgetModel.ApiFutureTaxTransaction{
 		Symbol:    "LINKBTC",
 		Timestamp: "16549876877",
-		Fee:       "-0.0012",
+		Amount:    "-0.0012",
+		Fee:       "0",
+		TaxType:   "contract_main_settle_fee",
 	}
 
 	output, err := converter.Convert(input)

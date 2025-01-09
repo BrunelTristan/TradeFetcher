@@ -1,9 +1,11 @@
 package bitget
 
+const FUNDING_TAX_TYPE_NAME = "contract_main_settle_fee"
+
 type ApiFutureTaxTransaction struct {
-	Symbol  string
-	TaxType string `json:"futureTaxType"`
-	//Amout     string
+	Symbol    string
+	TaxType   string `json:"futureTaxType"`
+	Amount    string
 	Fee       string
 	Timestamp string `json:"ts"`
 }

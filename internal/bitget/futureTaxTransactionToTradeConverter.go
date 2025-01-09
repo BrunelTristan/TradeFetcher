@@ -21,14 +21,18 @@ func (c *FutureTaxTransactionToTradeConverter) Convert(parameters *bitgetModel.A
 		return nil, nil
 	}
 
+	if parameters.TaxType != bitgetModel.FUNDING_TAX_TYPE_NAME {
+		return nil, nil
+	}
+
 	trade := &trading.Trade{Pair: parameters.Symbol}
 
-	floatVal, err := strconv.ParseFloat(parameters.Fee, 64)
+	floatVal, err := strconv.ParseFloat(parameters.Amount, 64)
 	if err != nil {
 		return nil, c.buildConvertionError(
-			"Fee",
+			"Amount",
 			"Fees",
-			parameters.Fee,
+			parameters.Amount,
 			" is not a float 64")
 	}
 	trade.Fees = -floatVal

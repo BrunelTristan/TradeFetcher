@@ -116,6 +116,83 @@ func TestTradesFetcherFetchLastTradesWithTradeConversionError(t *testing.T) {
 	}
 }
 
+func TestTradesFetcherFetchLastTradesWithNilConversions(t *testing.T) {
+	mockController := gomock.NewController(t)
+
+	externalGetterMock := generatedMocks.NewMockIQuery[bitgetModel.SpotGetFillQueryParameters](mockController)
+	tradeConverterMock := generatedMocks.NewMockIStructConverter[bitgetModel.ApiSpotFill, trading.Trade](mockController)
+
+	builtBitgetTrades := &bitgetModel.ApiSpotGetFills{
+		ApiResponse: bitgetModel.ApiResponse{Code: "000"},
+		Data: []*bitgetModel.ApiSpotFill{
+			&bitgetModel.ApiSpotFill{
+				Symbol:     "LINKBTC",
+				Side:       "buy",
+				Price:      "0.03654",
+				LastUpdate: "16549876877",
+				Size:       "1234.785",
+				FeeDetail: &bitgetModel.ApiFeeDetail{
+					FeesValue: "0.0012",
+				},
+			},
+			&bitgetModel.ApiSpotFill{
+				Symbol:     "LINKBTC",
+				Side:       "buy",
+				Price:      "0.03654",
+				LastUpdate: "16549976789",
+				Size:       "6547.13",
+				FeeDetail: &bitgetModel.ApiFeeDetail{
+					FeesValue: "0.0048",
+				},
+			},
+			&bitgetModel.ApiSpotFill{
+				Symbol:     "LINKBTC",
+				Side:       "sell",
+				Price:      "0.04012",
+				LastUpdate: "16550876654",
+				Size:       "5555.55",
+				FeeDetail: &bitgetModel.ApiFeeDetail{
+					FeesValue: "0.0037",
+				},
+			},
+		},
+	}
+
+	convertedTrades := []*trading.Trade{
+		nil,
+		&trading.Trade{Pair: "B"},
+		nil,
+	}
+
+	externalGetterMock.
+		EXPECT().
+		Get(gomock.Nil()).
+		Times(1).
+		Return(builtBitgetTrades, nil)
+
+	for index, trade := range builtBitgetTrades.Data {
+		tradeConverterMock.
+			EXPECT().
+			Convert(gomock.Eq(trade)).
+			Times(1).
+			Return(convertedTrades[index], nil)
+	}
+
+	fakeObject := NewTradesFetcher[bitgetModel.SpotGetFillQueryParameters, bitgetModel.ApiSpotFill](externalGetterMock, tradeConverterMock)
+
+	assert.NotNil(t, fakeObject)
+
+	trades, err := fakeObject.FetchLastTrades()
+
+	assert.Nil(t, err)
+	assert.NotEmpty(t, trades)
+	assert.Len(t, trades, 1)
+
+	if len(trades) == 1 {
+		assert.Equal(t, convertedTrades[1], trades[0])
+	}
+}
+
 func TestTradesFetcherFetchLastTradesWithoutError(t *testing.T) {
 	mockController := gomock.NewController(t)
 

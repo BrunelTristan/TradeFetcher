@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 	"tradeFetcher/internal/generatedMocks"
+	"tradeFetcher/internal/testingTools"
 	bitgetModel "tradeFetcher/model/bitget"
 	"tradeFetcher/model/error"
 )
@@ -87,9 +88,11 @@ func TestCallApiQueryWithoutErrorWithoutQueryStringWithoutBody(t *testing.T) {
 		Route: "/api/v2/public/time",
 	}
 
+	expectedRoute := strconv.FormatInt(int64(time.Now().UnixNano()/1000000), 10) + "GET/api/v2/public/time"
+
 	signatureBuilderMock.
 		EXPECT().
-		Sign(gomock.Eq([]byte(strconv.FormatInt(int64(time.Now().UnixNano()/1000000), 10) + "GET/api/v2/public/time"))).
+		Sign(testingTools.NewByteSliceMatcherWithException([]byte(expectedRoute), []int{7, 8, 9, 10, 11, 12})).
 		Times(1)
 
 	api := NewApiQuery(accountCfg, signatureBuilderMock)
@@ -116,9 +119,11 @@ func TestCallApiQueryWithoutErrorWithQueryStringWithoutBody(t *testing.T) {
 		Route: "/api/v2/public/time?param1=yesterday",
 	}
 
+	expectedRoute := strconv.FormatInt(int64(time.Now().UnixNano()/1000000), 10) + "GET/api/v2/public/time?param1=yesterday"
+
 	signatureBuilderMock.
 		EXPECT().
-		Sign(gomock.Eq([]byte(strconv.FormatInt(int64(time.Now().UnixNano()/1000000), 10) + "GET/api/v2/public/time?param1=yesterday"))).
+		Sign(testingTools.NewByteSliceMatcherWithException([]byte(expectedRoute), []int{7, 8, 9, 10, 11, 12})).
 		Times(1)
 
 	api := NewApiQuery(accountCfg, signatureBuilderMock)

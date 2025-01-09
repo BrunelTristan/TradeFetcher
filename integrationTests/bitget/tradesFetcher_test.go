@@ -140,7 +140,7 @@ func TestTradesFetcherFetchLastTradesWithRealFutureData(t *testing.T) {
 	if 2 == len(trades) {
 		assert.Equal(t, "TRXUSDT", trades[0].Pair)
 		assert.Equal(t, 0.26895, trades[0].Price)
-		assert.Equal(t, float64(112), trades[0].Quantity)
+		assert.Equal(t, 112.0, trades[0].Quantity)
 		assert.Equal(t, 0.01807344, trades[0].Fees)
 		assert.Equal(t, int64(1736019712), trades[0].ExecutedTimestamp)
 		assert.Equal(t, trading.CLOSE, trades[0].TransactionType)
@@ -152,5 +152,57 @@ func TestTradesFetcherFetchLastTradesWithRealFutureData(t *testing.T) {
 		assert.Equal(t, int64(1698730804), trades[1].ExecutedTimestamp)
 		assert.Equal(t, trading.OPENING, trades[1].TransactionType)
 		assert.False(t, trades[1].Long)
+	}
+}
+
+func TestTradesFetcherFetchLastTradesWithRealFutureTaxData(t *testing.T) {
+	mockController := gomock.NewController(t)
+
+	paramBuilderMock := generatedMocks.NewMockIQueryParametersBuilder[bitgetModel.FutureTaxTransactionsQueryParameters](mockController)
+	externalGetterMock := generatedMocks.NewMockIQuery[bitgetModel.FutureTaxTransactionsQueryParameters](mockController)
+	jsonConverter := json.NewJsonConverter[bitgetModel.ApiFutureTaxTransactions]()
+	tradeConverter := bitget.NewFutureTaxTransactionToTradeConverter()
+
+	getterToStruct := bitget.NewApiQueryToStructDecorator[bitgetModel.FutureTaxTransactionsQueryParameters, bitgetModel.ApiFutureTaxTransactions](
+		externalGetterMock,
+		paramBuilderMock,
+		jsonConverter,
+	)
+
+	paramBuilderMock.
+		EXPECT().
+		BuildQueryParameters().
+		Times(1).
+		Return(nil, nil)
+
+	externalGetterMock.
+		EXPECT().
+		Get(gomock.Any()).
+		Times(1).
+		Return("{\"code\":\"00000\",\"msg\":\"success\",\"requestTime\":1736428213984,\"data\":[{\"id\":\"1260617742759391277\",\"symbol\":\"AAVEUSDT\",\"marginCoin\":\"USDT\",\"futureTaxType\":\"open_long\",\"amount\":\"0\",\"fee\":\"-0.0185376\",\"ts\":\"1736280611695\"},{\"id\":\"1260675616772616210\",\"symbol\":\"AAVEUSDT\",\"marginCoin\":\"USDT\",\"futureTaxType\":\"contract_main_settle_fee\",\"amount\":\"-0.0030672\",\"fee\":\"0\",\"ts\":\"1736294409935\"},{\"id\":\"1260752787134378007\",\"symbol\":\"AAVEUSDT\",\"marginCoin\":\"USDT\",\"futureTaxType\":\"close_long\",\"amount\":\"-0.896\",\"fee\":\"-0.018\",\"ts\":\"1736312808783\"},{\"id\":\"1260906543729766420\",\"symbol\":\"TRXUSDT\",\"marginCoin\":\"USDT\",\"futureTaxType\":\"open_short\",\"amount\":\"0\",\"fee\":\"-0.059945412\",\"ts\":\"1736349467212\"},{\"id\":\"1260917227205062710\",\"symbol\":\"TRXUSDT\",\"marginCoin\":\"USDT\",\"futureTaxType\":\"contract_main_settle_fee\",\"amount\":\"0.0052043524\",\"fee\":\"0\",\"ts\":\"1736352014351\"},{\"id\":\"1260935952998232066\",\"symbol\":\"TRXUSDT\",\"marginCoin\":\"USDT\",\"futureTaxType\":\"close_short\",\"amount\":\"0.31126\",\"fee\":\"-0.011741928\",\"ts\":\"1736356478928\"}]}", nil)
+
+	bitgetFetcher := bitget.NewTradesFetcher[bitgetModel.FutureTaxTransactionsQueryParameters, bitgetModel.ApiFutureTaxTransaction](getterToStruct, tradeConverter)
+
+	assert.NotNil(t, bitgetFetcher)
+
+	trades, err := bitgetFetcher.FetchLastTrades()
+
+	assert.Nil(t, err)
+	assert.NotEmpty(t, trades)
+	assert.Len(t, trades, 2)
+
+	if 2 == len(trades) {
+		assert.Equal(t, "AAVEUSDT", trades[0].Pair)
+		assert.Equal(t, 0.0, trades[0].Price)
+		assert.Equal(t, 0.0, trades[0].Quantity)
+		assert.Equal(t, 0.0030672, trades[0].Fees)
+		assert.Equal(t, int64(1736294409), trades[0].ExecutedTimestamp)
+		assert.Equal(t, trading.FUNDING, trades[0].TransactionType)
+		assert.Equal(t, "TRXUSDT", trades[1].Pair)
+		assert.Equal(t, 0.0, trades[1].Price)
+		assert.Equal(t, 0.0, trades[1].Quantity)
+		assert.Equal(t, -0.0052043524, trades[1].Fees)
+		assert.Equal(t, int64(1736352014), trades[1].ExecutedTimestamp)
+		assert.Equal(t, trading.FUNDING, trades[1].TransactionType)
 	}
 }

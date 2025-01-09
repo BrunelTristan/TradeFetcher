@@ -4,7 +4,9 @@ import (
 	"errors"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/mock/gomock"
+	"strconv"
 	"testing"
+	"time"
 	"tradeFetcher/internal/generatedMocks"
 	bitgetModel "tradeFetcher/model/bitget"
 	"tradeFetcher/model/error"
@@ -18,10 +20,14 @@ func TestNewFutureTaxTransactionsGetter(t *testing.T) {
 
 func TestGetFutureTaxTransactionsWithBitgetError(t *testing.T) {
 	parameters := &bitgetModel.FutureTaxTransactionsQueryParameters{}
+	currentTimestamp := time.Now().Unix()
+	previousTimestamp := currentTimestamp - (20 * 24 * 3600)
+	currentTimestampString := strconv.FormatInt(currentTimestamp, 10)
+	previousTimestampString := strconv.FormatInt(previousTimestamp, 10)
 	expectedRoute := []string{"/api/v2/tax", "/future-record"}
-	expectedRouteParams := map[string]string{} //"productType": "USDT-FUTURES"}
+	expectedRouteParams := map[string]string{"endTime": currentTimestampString, "startTime": previousTimestampString}
 	expectedApiParameters := &bitgetModel.ApiQueryParameters{
-		Route: "/api/v2/mix/future-record", //?productType=USDT-FUTURES",
+		Route: "/api/v2/mix/future-record?endTime=" + currentTimestampString + "&startTime=" + previousTimestampString,
 	}
 	mockController := gomock.NewController(t)
 
@@ -53,10 +59,14 @@ func TestGetFutureTaxTransactionsWithBitgetError(t *testing.T) {
 
 func TestGetFutureTaxTransactionsWithoutError(t *testing.T) {
 	parameters := &bitgetModel.FutureTaxTransactionsQueryParameters{}
+	currentTimestamp := time.Now().Unix()
+	previousTimestamp := currentTimestamp - (20 * 24 * 3600)
+	currentTimestampString := strconv.FormatInt(currentTimestamp, 10)
+	previousTimestampString := strconv.FormatInt(previousTimestamp, 10)
 	expectedRoute := []string{"/api/v2/tax", "/future-record"}
-	expectedRouteParams := map[string]string{} //"productType": "USDT-FUTURES"}
+	expectedRouteParams := map[string]string{"endTime": currentTimestampString, "startTime": previousTimestampString}
 	expectedApiParameters := &bitgetModel.ApiQueryParameters{
-		Route: "/api/v2/mix/future-record", //?productType=USDT-FUTURES",
+		Route: "/api/v2/mix/future-record?endTime=" + currentTimestampString + "&startTime=" + previousTimestampString,
 	}
 	mockController := gomock.NewController(t)
 

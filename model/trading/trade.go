@@ -12,8 +12,6 @@ type Trade struct {
 	Pair              string
 	ExecutedTimestamp int64
 	TransactionType   TransactionType
-	// TODO remove Open
-	//Open     bool
 	Long     bool
 	Price    float64
 	Quantity float64

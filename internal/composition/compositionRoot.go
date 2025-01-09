@@ -41,8 +41,10 @@ func (c *CompositionRoot) Build() {
 	c.singletons["IApiRouteBuilder"] = externalTools.NewApiRouteBuilder()
 	c.singletons["IJsonConverter[bitgetModel.ApiSpotGetFills]"] = json.NewJsonConverter[bitgetModel.ApiSpotGetFills]()
 	c.singletons["IJsonConverter[bitgetModel.ApiFutureTransactions]"] = json.NewJsonConverter[bitgetModel.ApiFutureTransactions]()
+	c.singletons["IJsonConverter[bitgetModel.ApiFutureTaxTransactions]"] = json.NewJsonConverter[bitgetModel.ApiFutureTaxTransactions]()
 	c.singletons["IStructConverter[bitgetModel.ApiSpotGetFills,trading.Trade]"] = bitget.NewSpotFillToTradeConverter()
 	c.singletons["IStructConverter[bitgetModel.ApiFutureTransaction,trading.Trade]"] = bitget.NewFutureTransactionToTradeConverter()
+	c.singletons["IStructConverter[bitgetModel.ApiFutureTaxTransaction,trading.Trade]"] = bitget.NewFutureTaxTransactionToTradeConverter()
 
 	c.singletons["IQuery[bitgetModel.ApiQueryParameters]"] = bitget.NewApiQuery(
 		c.globalConfig.BitgetAccount,
@@ -57,6 +59,10 @@ func (c *CompositionRoot) Build() {
 		c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
 	)
 	c.singletons["IQuery[bitgetModel.FutureTransactionsQueryParameters]"] = bitget.NewFutureTransactionsGetter(
+		c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
+		c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
+	)
+	c.singletons["IQuery[bitgetModel.FutureTaxTransactionsQueryParameters]"] = bitget.NewFutureTaxTransactionsGetter(
 		c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
 		c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
 	)
@@ -77,6 +83,18 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 			c.singletons["IStructConverter[bitgetModel.ApiFutureTransaction,trading.Trade]"].(converter.IStructConverter[bitgetModel.ApiFutureTransaction, trading.Trade]),
 		),
 	}
+
+	bitgetFetcherList = append(
+		bitgetFetcherList,
+		bitget.NewTradesFetcher[bitgetModel.FutureTaxTransactionsQueryParameters, bitgetModel.ApiFutureTaxTransaction](
+			bitget.NewApiQueryToStructDecorator[bitgetModel.FutureTaxTransactionsQueryParameters, bitgetModel.ApiFutureTaxTransactions](
+				c.singletons["IQuery[bitgetModel.FutureTaxTransactionsQueryParameters]"].(common.IQuery[bitgetModel.FutureTaxTransactionsQueryParameters]),
+				common.NewNilQueryParametersBuilder[bitgetModel.FutureTaxTransactionsQueryParameters](),
+				c.singletons["IJsonConverter[bitgetModel.ApiFutureTaxTransactions]"].(json.IJsonConverter[bitgetModel.ApiFutureTaxTransactions]),
+			),
+			c.singletons["IStructConverter[bitgetModel.ApiFutureTaxTransaction,trading.Trade]"].(converter.IStructConverter[bitgetModel.ApiFutureTaxTransaction, trading.Trade]),
+		),
+	)
 
 	for _, asset := range c.globalConfig.BitgetSpotAssets {
 		bitgetFetcherList = append(

@@ -41,17 +41,18 @@ func (f TradesFetcher[P, O]) FetchLastTrades() ([]*trading.Trade, error) {
 	}
 
 	tradeList := apiResponse.GetList()
-	trades := make([]*trading.Trade, len(tradeList))
+	trades := []*trading.Trade{}
 
-	for index, trade := range tradeList {
+	for _, trade := range tradeList {
 		convertedTrade, err := f.tradeConverter.Convert(trade)
 		if err != nil {
 			return nil, &customError.BitgetError{
 				Code:    9999,
 				Message: err.Error(),
 			}
+		} else if convertedTrade != nil {
+			trades = append(trades, convertedTrade)
 		}
-		trades[index] = convertedTrade
 	}
 
 	return trades, nil

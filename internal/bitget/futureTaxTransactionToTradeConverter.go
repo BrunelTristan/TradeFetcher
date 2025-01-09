@@ -47,7 +47,6 @@ func (c *FutureTaxTransactionToTradeConverter) Convert(parameters *bitgetModel.A
 	}
 	trade.ExecutedTimestamp = intVal / 1000
 
-	// TODO test TaxType
 	trade.TransactionType = trading.FUNDING
 
 	return trade, nil

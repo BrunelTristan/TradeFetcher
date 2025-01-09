@@ -30,8 +30,8 @@ func (g *FutureTaxTransactionsGetter) Get(parameters *bitgetModel.FutureTaxTrans
 	route := g.routeBuilder.BuildRoute(
 		[]string{bitgetModel.TAX_ROOT_ROUTE, bitgetModel.TAX_GET_FUTURE_TRANSACTION_SUB_ROUTE},
 		map[string]string{
-			bitgetModel.END_TIME:   strconv.FormatInt(currentTimestamp, 10),
-			bitgetModel.START_TIME: strconv.FormatInt(currentTimestamp-TWENTY_DAYS_IN_SECONDS, 10),
+			bitgetModel.END_TIME:   strconv.FormatInt(currentTimestamp, 10) + "000",
+			bitgetModel.START_TIME: strconv.FormatInt(currentTimestamp-TWENTY_DAYS_IN_SECONDS, 10) + "000",
 		},
 	)
 

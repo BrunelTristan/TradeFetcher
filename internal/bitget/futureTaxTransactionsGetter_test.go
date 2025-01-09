@@ -22,8 +22,8 @@ func TestGetFutureTaxTransactionsWithBitgetError(t *testing.T) {
 	parameters := &bitgetModel.FutureTaxTransactionsQueryParameters{}
 	currentTimestamp := time.Now().Unix()
 	previousTimestamp := currentTimestamp - (20 * 24 * 3600)
-	currentTimestampString := strconv.FormatInt(currentTimestamp, 10)
-	previousTimestampString := strconv.FormatInt(previousTimestamp, 10)
+	currentTimestampString := strconv.FormatInt(currentTimestamp, 10) + "000"
+	previousTimestampString := strconv.FormatInt(previousTimestamp, 10) + "000"
 	expectedRoute := []string{"/api/v2/tax", "/future-record"}
 	expectedRouteParams := map[string]string{"endTime": currentTimestampString, "startTime": previousTimestampString}
 	expectedApiParameters := &bitgetModel.ApiQueryParameters{
@@ -61,8 +61,8 @@ func TestGetFutureTaxTransactionsWithoutError(t *testing.T) {
 	parameters := &bitgetModel.FutureTaxTransactionsQueryParameters{}
 	currentTimestamp := time.Now().Unix()
 	previousTimestamp := currentTimestamp - (20 * 24 * 3600)
-	currentTimestampString := strconv.FormatInt(currentTimestamp, 10)
-	previousTimestampString := strconv.FormatInt(previousTimestamp, 10)
+	currentTimestampString := strconv.FormatInt(currentTimestamp, 10) + "000"
+	previousTimestampString := strconv.FormatInt(previousTimestamp, 10) + "000"
 	expectedRoute := []string{"/api/v2/tax", "/future-record"}
 	expectedRouteParams := map[string]string{"endTime": currentTimestampString, "startTime": previousTimestampString}
 	expectedApiParameters := &bitgetModel.ApiQueryParameters{

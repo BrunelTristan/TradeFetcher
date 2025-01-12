@@ -47,10 +47,10 @@ func launch(conf *configuration.CmdLineConfiguration) {
 
 	if fetcher != nil && processor != nil {
 		trades, err := fetcher.FetchLastTrades()
-
 		fmt.Println(err)
 
-		processor.ProcessTrades(trades)
+		err = processor.ProcessTrades(trades)
+		fmt.Println(err)
 	} else {
 		flag.PrintDefaults()
 	}

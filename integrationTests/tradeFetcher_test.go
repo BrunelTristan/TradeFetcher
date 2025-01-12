@@ -18,7 +18,9 @@ func TestMain(t *testing.T) {
 	processor := root.ComposeProcessUnit()
 
 	trades, err := fetcher.FetchLastTrades()
-	processor.ProcessTrades(trades)
-
 	assert.Nil(t, err)
+
+	err = processor.ProcessTrades(trades)
+	assert.Nil(t, err)
+
 }

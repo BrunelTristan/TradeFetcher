@@ -43,14 +43,17 @@ func launch(conf *configuration.CmdLineConfiguration) {
 	root.Build()
 
 	fetcher := root.ComposeFetcher()
-	processor := root.ComposeProcessUnit()
+	processors := root.ComposeProcessUnit()
 
-	if fetcher != nil && processor != nil {
+	if fetcher != nil && len(processors) > 0 {
 		trades, err := fetcher.FetchLastTrades()
 		fmt.Println(err)
 
-		err = processor.ProcessTrades(trades)
-		fmt.Println(err)
+		for _, processor := range processors {
+			// TODO parallelize with go routine
+			err = processor.ProcessTrades(trades)
+			fmt.Println(err)
+		}
 	} else {
 		flag.PrintDefaults()
 	}

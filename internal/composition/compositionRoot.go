@@ -66,6 +66,8 @@ func (c *CompositionRoot) Build() {
 		c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
 		c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
 	)
+
+	c.singletons["CsvTradeFormatter"] = formatter.NewCsvTradeFormatter()
 }
 
 func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
@@ -115,7 +117,16 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 	)
 }
 
-func (c *CompositionRoot) ComposeProcessUnit() processUnit.IProcessUnit {
-	return processUnit.NewTradeDisplayer(
-		formatter.NewCsvTradeFormatter())
+func (c *CompositionRoot) ComposeProcessUnit() []processUnit.IProcessUnit {
+	if c.globalConfig == nil {
+		return nil
+	}
+
+	return []processUnit.IProcessUnit{
+		processUnit.NewTradeDisplayer(c.singletons["CsvTradeFormatter"].(formatter.ITradeFormatter)),
+		processUnit.NewTradeFileSaver(
+			c.singletons["CsvTradeFormatter"].(formatter.ITradeFormatter),
+			c.globalConfig.TradeHistoryFilePath,
+		),
+	}
 }

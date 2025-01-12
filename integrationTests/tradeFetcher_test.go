@@ -15,12 +15,14 @@ func TestMain(t *testing.T) {
 	root.Build()
 
 	fetcher := root.ComposeFetcher()
-	processor := root.ComposeProcessUnit()
+	processors := root.ComposeProcessUnit()
 
 	trades, err := fetcher.FetchLastTrades()
 	assert.Nil(t, err)
 
-	err = processor.ProcessTrades(trades)
-	assert.Nil(t, err)
-
+	assert.LessOrEqual(t, 1, len(processors))
+	for _, processor := range processors {
+		err = processor.ProcessTrades(trades)
+		assert.Nil(t, err)
+	}
 }

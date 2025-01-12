@@ -19,7 +19,7 @@ func NewTradeFileSaver(tradeFormat formatter.ITradeFormatter, fPath string) IPro
 	}
 }
 
-func (s TradeFileSaver) ProcessTrades(trades []*trading.Trade) error {
+func (s *TradeFileSaver) ProcessTrades(trades []*trading.Trade) error {
 	if len(trades) == 0 {
 		return nil
 	}

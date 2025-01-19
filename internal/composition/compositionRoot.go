@@ -12,6 +12,7 @@ import (
 	"tradeFetcher/internal/json"
 	"tradeFetcher/internal/processUnit"
 	"tradeFetcher/internal/security"
+	"tradeFetcher/internal/threading"
 	bitgetModel "tradeFetcher/model/bitget"
 	configModel "tradeFetcher/model/configuration"
 	"tradeFetcher/model/trading"
@@ -73,11 +74,7 @@ func (c *CompositionRoot) Build() {
 	c.singletons["CsvTradeFormatter"] = formatter.NewCsvTradeFormatter()
 }
 
-func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
-	if c.globalConfig == nil {
-		return nil
-	}
-
+func (c *CompositionRoot) composeFetcher() fetcher.IFetcher {
 	bitgetFetcherList := []fetcher.IFetcher{
 		bitget.NewTradesFetcher[bitgetModel.FutureTransactionsQueryParameters, bitgetModel.ApiFutureTransaction](
 			bitget.NewApiQueryToStructDecorator[bitgetModel.FutureTransactionsQueryParameters, bitgetModel.ApiFutureTransactions](
@@ -122,11 +119,7 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 	)
 }
 
-func (c *CompositionRoot) ComposeProcessUnit() []processUnit.IProcessUnit {
-	if c.globalConfig == nil {
-		return nil
-	}
-
+func (c *CompositionRoot) composeProcessUnit() []processUnit.IProcessUnit {
 	return []processUnit.IProcessUnit{
 		processUnit.NewTradeDisplayer(c.singletons["CsvTradeFormatter"].(formatter.ITradeFormatter)),
 		processUnit.NewTradeFileSaver(
@@ -134,4 +127,18 @@ func (c *CompositionRoot) ComposeProcessUnit() []processUnit.IProcessUnit {
 			c.globalConfig.TradeHistoryFilePath,
 		),
 	}
+}
+
+func (c *CompositionRoot) ComposeOrchestration() threading.IThreadOrchestrator {
+	if c.globalConfig == nil {
+		return nil
+	}
+
+	return threading.NewPeriodicThreadOrchestrator(
+		threading.NewFetcherProcessorsWorker(
+			c.composeFetcher(),
+			c.composeProcessUnit(),
+		),
+		1000*c.globalConfig.OrchestrationPeriodicityInSeconds,
+	)
 }

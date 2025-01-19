@@ -42,18 +42,10 @@ func launch(conf *configuration.CmdLineConfiguration) {
 
 	root.Build()
 
-	fetcher := root.ComposeFetcher()
-	processors := root.ComposeProcessUnit()
+	orchestrator := root.ComposeOrchestration()
 
-	if fetcher != nil && len(processors) > 0 {
-		trades, err := fetcher.FetchLastTrades()
-		fmt.Println(err)
-
-		for _, processor := range processors {
-			// TODO parallelize with go routine
-			err = processor.ProcessTrades(trades)
-			fmt.Println(err)
-		}
+	if orchestrator != nil {
+		orchestrator.Orchestrate()
 	} else {
 		flag.PrintDefaults()
 	}

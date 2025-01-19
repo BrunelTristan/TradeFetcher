@@ -3,6 +3,7 @@ package integrationTest
 import (
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 	"tradeFetcher/internal/composition"
 	"tradeFetcher/model/configuration"
 )
@@ -14,15 +15,13 @@ func TestMain(t *testing.T) {
 
 	root.Build()
 
-	fetcher := root.ComposeFetcher()
-	processors := root.ComposeProcessUnit()
+	orchestrator := root.ComposeOrchestration()
 
-	trades, err := fetcher.FetchLastTrades()
-	assert.Nil(t, err)
+	assert.NotNil(t, orchestrator)
 
-	assert.LessOrEqual(t, 1, len(processors))
-	for _, processor := range processors {
-		err = processor.ProcessTrades(trades)
-		assert.Nil(t, err)
-	}
+	orchestrator.Orchestrate()
+
+	time.Sleep(1 * time.Second)
+
+	orchestrator.EndOrchestration()
 }

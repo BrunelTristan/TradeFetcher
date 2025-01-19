@@ -20,8 +20,10 @@ func NewFetcherProcessorsWorker(fetch fetcher.IFetcher, processUnits []processUn
 func (w *FetcherProcessorsWorker) Run() {
 	trades, err := w.fetcher.FetchLastTrades()
 
+	// TODO Log errors : from fetche and from processors
 	if err == nil {
 		for _, processor := range w.processors {
+			// TODO parallelize with go routine
 			_ = processor.ProcessTrades(trades)
 		}
 	}

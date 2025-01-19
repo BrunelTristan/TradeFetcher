@@ -1,4 +1,4 @@
-package processUnit
+package fileRetriever
 
 import (
 	"github.com/stretchr/testify/assert"

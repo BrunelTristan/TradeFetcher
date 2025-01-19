@@ -1,4 +1,4 @@
-package processUnit
+package fileRetriever
 
 import (
 	"fmt"
@@ -6,13 +6,14 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"tradeFetcher/internal/processUnit"
 )
 
 type LastTradeFileRetriever struct {
 	filePath string
 }
 
-func NewLastTradeFileRetriever(fPath string) ILastProceedRetriever {
+func NewLastTradeFileRetriever(fPath string) processUnit.ILastProceedRetriever {
 	return &LastTradeFileRetriever{
 		filePath: fPath,
 	}

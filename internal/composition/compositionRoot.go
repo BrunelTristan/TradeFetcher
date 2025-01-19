@@ -7,6 +7,7 @@ import (
 	"tradeFetcher/internal/converter"
 	"tradeFetcher/internal/externalTools"
 	"tradeFetcher/internal/fetcher"
+	"tradeFetcher/internal/fileRetriever"
 	"tradeFetcher/internal/formatter"
 	"tradeFetcher/internal/json"
 	"tradeFetcher/internal/processUnit"
@@ -45,6 +46,8 @@ func (c *CompositionRoot) Build() {
 	c.singletons["IStructConverter[bitgetModel.ApiSpotGetFills,trading.Trade]"] = bitget.NewSpotFillToTradeConverter()
 	c.singletons["IStructConverter[bitgetModel.ApiFutureTransaction,trading.Trade]"] = bitget.NewFutureTransactionToTradeConverter()
 	c.singletons["IStructConverter[bitgetModel.ApiFutureTaxTransaction,trading.Trade]"] = bitget.NewFutureTaxTransactionToTradeConverter()
+
+	c.singletons["ILastProceedRetriever"] = fileRetriever.NewLastTradeFileRetriever(c.globalConfig.TradeHistoryFilePath)
 
 	c.singletons["IQuery[bitgetModel.ApiQueryParameters]"] = bitget.NewApiQuery(
 		c.globalConfig.BitgetAccount,
@@ -112,8 +115,10 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 		)
 	}
 
-	return fetcher.NewSortByDateFetcherDecorator(
+	return fetcher.NewFilterByDateFetcherDecorator(fetcher.NewSortByDateFetcherDecorator(
 		fetcher.NewBitgetFetcher(bitgetFetcherList),
+	),
+		c.singletons["ILastProceedRetriever"].(processUnit.ILastProceedRetriever),
 	)
 }
 

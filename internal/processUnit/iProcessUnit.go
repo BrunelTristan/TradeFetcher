@@ -5,5 +5,5 @@ import (
 )
 
 type IProcessUnit interface {
-	ProcessTrades(trades []*trading.Trade)
+	ProcessTrades(trades []*trading.Trade) error
 }

@@ -16,8 +16,10 @@ func NewTradeDisplayer(tradeFormat formatter.ITradeFormatter) IProcessUnit {
 	}
 }
 
-func (t TradeDisplayer) ProcessTrades(trades []*trading.Trade) {
+func (t TradeDisplayer) ProcessTrades(trades []*trading.Trade) error {
 	for _, trade := range trades {
 		fmt.Println(t.tradeFormatter.Format(trade))
 	}
+
+	return nil
 }

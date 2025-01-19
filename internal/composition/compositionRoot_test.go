@@ -35,13 +35,25 @@ func TestComposeFetcherWithValidConfig(t *testing.T) {
 	assert.NotNil(t, fetcher)
 }
 
-func TestComposeProcessUnit(t *testing.T) {
+func TestComposeProcessUnitWithoutValidConfig(t *testing.T) {
 	conf := &configuration.CmdLineConfiguration{}
 	root := NewCompositionRoot(conf)
 
 	root.Build()
 
-	unit := root.ComposeProcessUnit()
+	units := root.ComposeProcessUnit()
 
-	assert.NotNil(t, unit)
+	assert.Nil(t, units)
+}
+
+func TestComposeProcessUnitWithValidConfig(t *testing.T) {
+	conf := &configuration.CmdLineConfiguration{ConfigFilePath: "/src/integrationTests/files/globalConfig.json"}
+	root := NewCompositionRoot(conf)
+
+	root.Build()
+
+	units := root.ComposeProcessUnit()
+
+	assert.NotNil(t, units)
+	assert.LessOrEqual(t, 2, len(units))
 }

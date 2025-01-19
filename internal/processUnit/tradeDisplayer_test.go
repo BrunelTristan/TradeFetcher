@@ -14,7 +14,7 @@ func TestNewTradeDisplayer(t *testing.T) {
 	assert.NotNil(t, displayer)
 }
 
-func TestProcessTradesOnEmptySlice(t *testing.T) {
+func TestProcessTradesDisplayerOnEmptySlice(t *testing.T) {
 	mockController := gomock.NewController(t)
 
 	tradeFormatterMock := generatedMocks.NewMockITradeFormatter(mockController)
@@ -30,10 +30,12 @@ func TestProcessTradesOnEmptySlice(t *testing.T) {
 
 	trades := []*trading.Trade{}
 
-	displayer.ProcessTrades(trades)
+	err := displayer.ProcessTrades(trades)
+
+	assert.Nil(t, err)
 }
 
-func TestProcessTradesWithValues(t *testing.T) {
+func TestProcessTradesDisplayerWithValues(t *testing.T) {
 	mockController := gomock.NewController(t)
 
 	tradeFormatterMock := generatedMocks.NewMockITradeFormatter(mockController)
@@ -53,5 +55,7 @@ func TestProcessTradesWithValues(t *testing.T) {
 		&trading.Trade{},
 	}
 
-	displayer.ProcessTrades(trades)
+	err := displayer.ProcessTrades(trades)
+
+	assert.Nil(t, err)
 }

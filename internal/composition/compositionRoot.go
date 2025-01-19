@@ -7,6 +7,7 @@ import (
 	"tradeFetcher/internal/converter"
 	"tradeFetcher/internal/externalTools"
 	"tradeFetcher/internal/fetcher"
+	"tradeFetcher/internal/fileRetriever"
 	"tradeFetcher/internal/formatter"
 	"tradeFetcher/internal/json"
 	"tradeFetcher/internal/processUnit"
@@ -46,6 +47,8 @@ func (c *CompositionRoot) Build() {
 	c.singletons["IStructConverter[bitgetModel.ApiFutureTransaction,trading.Trade]"] = bitget.NewFutureTransactionToTradeConverter()
 	c.singletons["IStructConverter[bitgetModel.ApiFutureTaxTransaction,trading.Trade]"] = bitget.NewFutureTaxTransactionToTradeConverter()
 
+	c.singletons["ILastProceedRetriever"] = fileRetriever.NewLastTradeFileRetriever(c.globalConfig.TradeHistoryFilePath)
+
 	c.singletons["IQuery[bitgetModel.ApiQueryParameters]"] = bitget.NewApiQuery(
 		c.globalConfig.BitgetAccount,
 		bitget.NewApiSignatureBuilder(
@@ -66,6 +69,8 @@ func (c *CompositionRoot) Build() {
 		c.singletons["IQuery[bitgetModel.ApiQueryParameters]"].(common.IQuery[bitgetModel.ApiQueryParameters]),
 		c.singletons["IApiRouteBuilder"].(externalTools.IApiRouteBuilder),
 	)
+
+	c.singletons["CsvTradeFormatter"] = formatter.NewCsvTradeFormatter()
 }
 
 func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
@@ -110,12 +115,23 @@ func (c *CompositionRoot) ComposeFetcher() fetcher.IFetcher {
 		)
 	}
 
-	return fetcher.NewSortByDateFetcherDecorator(
+	return fetcher.NewFilterByDateFetcherDecorator(fetcher.NewSortByDateFetcherDecorator(
 		fetcher.NewBitgetFetcher(bitgetFetcherList),
+	),
+		c.singletons["ILastProceedRetriever"].(processUnit.ILastProceedRetriever),
 	)
 }
 
-func (c *CompositionRoot) ComposeProcessUnit() processUnit.IProcessUnit {
-	return processUnit.NewTradeDisplayer(
-		formatter.NewCsvTradeFormatter())
+func (c *CompositionRoot) ComposeProcessUnit() []processUnit.IProcessUnit {
+	if c.globalConfig == nil {
+		return nil
+	}
+
+	return []processUnit.IProcessUnit{
+		processUnit.NewTradeDisplayer(c.singletons["CsvTradeFormatter"].(formatter.ITradeFormatter)),
+		processUnit.NewTradeFileSaver(
+			c.singletons["CsvTradeFormatter"].(formatter.ITradeFormatter),
+			c.globalConfig.TradeHistoryFilePath,
+		),
+	}
 }

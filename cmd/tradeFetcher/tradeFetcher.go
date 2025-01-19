@@ -9,7 +9,7 @@ import (
 
 const (
 	major = 2
-	minor = 1
+	minor = 2
 	patch = 0
 )
 
@@ -43,14 +43,17 @@ func launch(conf *configuration.CmdLineConfiguration) {
 	root.Build()
 
 	fetcher := root.ComposeFetcher()
-	processor := root.ComposeProcessUnit()
+	processors := root.ComposeProcessUnit()
 
-	if fetcher != nil && processor != nil {
+	if fetcher != nil && len(processors) > 0 {
 		trades, err := fetcher.FetchLastTrades()
-
 		fmt.Println(err)
 
-		processor.ProcessTrades(trades)
+		for _, processor := range processors {
+			// TODO parallelize with go routine
+			err = processor.ProcessTrades(trades)
+			fmt.Println(err)
+		}
 	} else {
 		flag.PrintDefaults()
 	}

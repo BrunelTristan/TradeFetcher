@@ -1,7 +1,9 @@
 package main
 
 import (
+	"syscall"
 	"testing"
+	"time"
 	"tradeFetcher/model/configuration"
 )
 
@@ -22,5 +24,13 @@ func TestRunForFetchingWithoutConfigFile(t *testing.T) {
 func TestRunForFetching(t *testing.T) {
 	conf := configuration.CmdLineConfiguration{ConfigFilePath: "/src/integrationTests/files/globalConfig.json"}
 
-	run(false, &conf)
+	go func() {
+		run(false, &conf)
+
+		time.Sleep(10 * time.Millisecond)
+
+		_ = syscall.Kill(syscall.Getpid(), syscall.SIGINT)
+	}()
+
+	time.Sleep(100 * time.Millisecond)
 }

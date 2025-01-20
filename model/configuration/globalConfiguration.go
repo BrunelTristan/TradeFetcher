@@ -5,7 +5,8 @@ import (
 )
 
 type GlobalConfiguration struct {
-	TradeHistoryFilePath string
-	BitgetAccount        *bitget.AccountConfiguration
-	BitgetSpotAssets     []string
+	TradeHistoryFilePath              string
+	OrchestrationPeriodicityInSeconds int64
+	BitgetAccount                     *bitget.AccountConfiguration
+	BitgetSpotAssets                  []string
 }

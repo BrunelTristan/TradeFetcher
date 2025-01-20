@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 	"tradeFetcher/internal/composition"
 	"tradeFetcher/model/configuration"
 )
@@ -42,18 +45,19 @@ func launch(conf *configuration.CmdLineConfiguration) {
 
 	root.Build()
 
-	fetcher := root.ComposeFetcher()
-	processors := root.ComposeProcessUnit()
+	orchestrator := root.ComposeOrchestration()
 
-	if fetcher != nil && len(processors) > 0 {
-		trades, err := fetcher.FetchLastTrades()
-		fmt.Println(err)
+	if orchestrator != nil {
+		sigKillCatcher := make(chan os.Signal, 1)
+		signal.Notify(sigKillCatcher, syscall.SIGINT, syscall.SIGTERM)
 
-		for _, processor := range processors {
-			// TODO parallelize with go routine
-			err = processor.ProcessTrades(trades)
-			fmt.Println(err)
-		}
+		go func() {
+			orchestrator.Orchestrate()
+		}()
+
+		<-sigKillCatcher
+		orchestrator.EndOrchestration()
+
 	} else {
 		flag.PrintDefaults()
 	}

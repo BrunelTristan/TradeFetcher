@@ -13,47 +13,24 @@ func TestBuild(t *testing.T) {
 	root.Build()
 }
 
-func TestComposeFetcherWithoutValidConfig(t *testing.T) {
-	conf := &configuration.CmdLineConfiguration{ConfigFilePath: "nothing"}
-	root := NewCompositionRoot(conf)
-
-	root.Build()
-
-	fetcher := root.ComposeFetcher()
-
-	assert.Nil(t, fetcher)
-}
-
-func TestComposeFetcherWithValidConfig(t *testing.T) {
-	conf := &configuration.CmdLineConfiguration{ConfigFilePath: "/src/integrationTests/files/globalConfig.json"}
-	root := NewCompositionRoot(conf)
-
-	root.Build()
-
-	fetcher := root.ComposeFetcher()
-
-	assert.NotNil(t, fetcher)
-}
-
-func TestComposeProcessUnitWithoutValidConfig(t *testing.T) {
+func TestComposeOrchestrationWithoutValidConfig(t *testing.T) {
 	conf := &configuration.CmdLineConfiguration{}
 	root := NewCompositionRoot(conf)
 
 	root.Build()
 
-	units := root.ComposeProcessUnit()
+	orchestrator := root.ComposeOrchestration()
 
-	assert.Nil(t, units)
+	assert.Nil(t, orchestrator)
 }
 
-func TestComposeProcessUnitWithValidConfig(t *testing.T) {
+func TestComposeOrchestrationWithValidConfig(t *testing.T) {
 	conf := &configuration.CmdLineConfiguration{ConfigFilePath: "/src/integrationTests/files/globalConfig.json"}
 	root := NewCompositionRoot(conf)
 
 	root.Build()
 
-	units := root.ComposeProcessUnit()
+	orchestrator := root.ComposeOrchestration()
 
-	assert.NotNil(t, units)
-	assert.LessOrEqual(t, 2, len(units))
+	assert.NotNil(t, orchestrator)
 }

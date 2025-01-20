@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 	"tradeFetcher/internal/composition"
 	"tradeFetcher/model/configuration"
 )
@@ -45,7 +48,12 @@ func launch(conf *configuration.CmdLineConfiguration) {
 	orchestrator := root.ComposeOrchestration()
 
 	if orchestrator != nil {
+		sigKillCatcher := make(chan os.Signal, 1)
+		signal.Notify(sigKillCatcher, syscall.SIGINT, syscall.SIGTERM)
+
 		orchestrator.Orchestrate()
+
+		<-sigKillCatcher
 	} else {
 		flag.PrintDefaults()
 	}

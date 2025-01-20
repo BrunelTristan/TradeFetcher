@@ -51,9 +51,13 @@ func launch(conf *configuration.CmdLineConfiguration) {
 		sigKillCatcher := make(chan os.Signal, 1)
 		signal.Notify(sigKillCatcher, syscall.SIGINT, syscall.SIGTERM)
 
-		orchestrator.Orchestrate()
+		go func() {
+			orchestrator.Orchestrate()
+		}()
 
 		<-sigKillCatcher
+		orchestrator.EndOrchestration()
+
 	} else {
 		flag.PrintDefaults()
 	}
